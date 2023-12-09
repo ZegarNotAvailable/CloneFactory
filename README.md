@@ -36,6 +36,13 @@ In the new version CA80 (1989 - 1990) these chips were moved to the motherboard 
 Clone takes this change. I also added a CLK generator and an NMI divider, which did not fit on the CA80-CPU.
 They are not needed when we use the CA80-bootloader module.
 
+- CLK was originally 4 MHz. This is important in tape recorder operating procedures. We can use a different frequency with some restrictions.
+- NMI is the computer's most important signal. In the original it was 500 Hz and that's what it should always be.
+  As the name suggests, this signal reports a non-maskable interrupt, which:
+  - displays successive display digits multiplexed.
+  - Checks if the "M" key has been pressed.
+  - Counts down seconds, minutes, hours... years in RTC.
+
 ![CA80 during operation.](https://github.com/ZegarNotAvailable/CloneFactory/blob/main/HardWare/Pictures/CA80-RCbus-Flash.jpg)
 
 ## Code for CA80 with Msid
