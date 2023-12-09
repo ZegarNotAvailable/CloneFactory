@@ -27,6 +27,15 @@ Contains system interfaces:
 - display,
 - and tape recorder.
 
+### MIK89 module.
+
+The original only included the i8255 and Z80 CTC. On the edge was a ZS connector containing signals for use outside the motherboard. 
+Soldering points scattered throughout the board were connected with wires to a male DB50 called ZU50.
+In the new version CA80 (1989 - 1990) these chips were moved to the motherboard and ZU64 was added.
+
+Clone takes this change. I also added a CLK generator and an NMI divider, which did not fit on the CA80-CPU.
+They are not needed when we use the CA80-bootloader module.
+
 ![CA80 during operation.](https://github.com/ZegarNotAvailable/CloneFactory/blob/main/HardWare/Pictures/CA80-RCbus-Flash.jpg)
 
 ## Code for CA80 with Msid
