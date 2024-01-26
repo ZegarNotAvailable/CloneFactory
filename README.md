@@ -58,3 +58,4 @@ Additionally, we have a `user.txt` file in which we can also save up to five fil
 Based on the description (MIK11), I recreated the basic functions of the program working with CA80 - MSID. It was a development tool used to debug programs.
 Various versions of this tool were written for Amstrad, CP/M and IBM PC computers.
 ![Poor MSID version.](https://github.com/ZegarNotAvailable/CloneFactory/blob/main/HardWare/Pictures/MSid-proced-sys.jpg)
+- [YouTube](https://www.youtube.com/watch?v=amFPMQ4f2Og).
