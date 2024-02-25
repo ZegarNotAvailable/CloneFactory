@@ -1,6 +1,6 @@
 # CloneFactory
 
-I present a computer compatible with the software of the best Polish educational computer of the 1980s and 1990s - CA80. 
+I show a computer compatible with the software of the best Polish educational computer of the 1980s and 1990s - CA80. 
 It is not an original or a replica, but a completely new design, using all possible features of the original. 
 I have kept the numbering of elements and the names of modules to facilitate the use of the original documentation. 
 All programs written for CA80 in accordance with Mr. Stanisław Gardynik's recommendations should work.
