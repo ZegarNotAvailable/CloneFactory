@@ -14,13 +14,10 @@ It is not a CP/M system, but a self-sufficient computer with a hexadecimal keybo
 In the minimum version, 2kB EPROM and 2kB RAM are enough, but it is optimal to use the full 64kB RAM.
 It is possible to build a classic version with EPROM and a CLK generator, but using an additional module with an ATmega32A microcontroller significantly increases the computer's capabilities.
 
-### CA80-CPU module.
+### CA80-mini.
 
-Includes processor and memory. The decoder is consistent with the original and divides the address space into four parts. 
+It's MIK90 equivalent. Includes processor and memory. The decoder is consistent with the original and divides the address space into four parts. 
 By default, all memory is allocated to RAM. We can allocate one or two sixteen-kilobyte areas to EPROM, which we can insert into the U9 socket. 
-If we use memory on another module, we can also disconnect it from RAM.
-
-### CA80-SYS-I/O module.
 
 Contains system interfaces: 
 - keyboard,
