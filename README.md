@@ -13,6 +13,7 @@ The computer consists of RC80 standard modules.
 It is not a CP/M system, but a self-sufficient computer with a hexadecimal keyboard and a seven-segment display.
 In the minimum version, 2kB EPROM and 2kB RAM are enough, but it is optimal to use the full 64kB RAM.
 It is possible to build a classic version with EPROM and a CLK generator, but using an additional module with an ATmega32A microcontroller significantly increases the computer's capabilities.
+[YouTube](https://youtu.be/DX81GWKvyLs).
 
 ### CA80-CPU module.
 
@@ -57,3 +58,4 @@ Additionally, we have a `user.txt` file in which we can also save up to five fil
 Based on the description (MIK11), I recreated the basic functions of the program working with CA80 - MSID. It was a development tool used to debug programs.
 Various versions of this tool were written for Amstrad, CP/M and IBM PC computers.
 ![Poor MSID version.](https://github.com/ZegarNotAvailable/CloneFactory/blob/main/HardWare/Pictures/MSid-proced-sys.jpg)
+- [YouTube](https://www.youtube.com/watch?v=amFPMQ4f2Og).
