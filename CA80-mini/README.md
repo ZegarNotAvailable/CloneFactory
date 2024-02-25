@@ -1,6 +1,6 @@
-# CloneFactory
+# CA80-mini
 
-I present a computer compatible with the software of the best Polish educational computer of the 1980s and 1990s - CA80. 
+I show a computer compatible with the software of the best Polish educational computer of the 1980s and 1990s - CA80. 
 It is not an original or a replica, but a completely new design, using all possible features of the original. 
 I have kept the numbering of elements and the names of modules to facilitate the use of the original documentation. 
 All programs written for CA80 in accordance with Mr. Stanisław Gardynik's recommendations should work.
@@ -8,7 +8,7 @@ All programs written for CA80 in accordance with Mr. Stanisław Gardynik's recom
 
 ## Hardware
 
-![Assembled modules](https://github.com/ZegarNotAvailable/CloneFactory/blob/main/HardWare/Pictures/CA80-modules.jpg)
+![Assembled modules]([(https://github.com/ZegarNotAvailable/CloneFactory/blob/main/CA80-mini/HW/Pics/KlonCA80-ready.jpg)])
 The computer consists of RC80 standard modules. 
 It is not a CP/M system, but a self-sufficient computer with a hexadecimal keyboard and a seven-segment display.
 In the minimum version, 2kB EPROM and 2kB RAM are enough, but it is optimal to use the full 64kB RAM.
