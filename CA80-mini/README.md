@@ -9,7 +9,7 @@ All programs written for CA80 in accordance with Mr. Stanisław Gardynik's recom
 ## Hardware
 
 ![Assembled modules](https://github.com/ZegarNotAvailable/CloneFactory/blob/main/CA80-mini/HW/Pics/KlonCA80-ready.jpg)
-The computer consists of RC80 standard modules. 
+
 It is not a CP/M system, but a self-sufficient computer with a hexadecimal keyboard and a seven-segment display.
 In the minimum version, 2kB EPROM and 2kB RAM are enough, but it is optimal to use the full 64kB RAM.
 It is possible to build a classic version with EPROM and a CLK generator, but using an additional module with an ATmega32A microcontroller significantly increases the computer's capabilities.
