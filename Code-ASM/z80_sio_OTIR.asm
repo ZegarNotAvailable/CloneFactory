@@ -43,13 +43,6 @@ SUCCESS:
     CALL CRLF
     JR LOOP
     
-CRLF:
-    LD A,0DH            ;ASCII "CR"
-    CALL SEND_CHAR
-    LD A,0AH            ;ASCII "LF"
-    CALL SEND_CHAR
-    RET
-
 TEST_KOM:
     .DB "SEND FROM CHANNEL: "
     .DB 0FFH
@@ -64,15 +57,19 @@ SIO_TX:
     CALL PRN_TEST    
     INC B               ;CHANNEL B
     INC D               ;LETTER "B"
-    CALL PRN_TEST
-    RET
-
+    
 PRN_TEST:
     LD HL,TEST_KOM
     CALL PRINT
     LD A,D
     CALL SEND_CHAR
-    JR CRLF
+    
+CRLF:
+    LD A,0DH            ;ASCII "CR"
+    CALL SEND_CHAR
+    LD A,0AH            ;ASCII "LF"
+    CALL SEND_CHAR
+    RET
 
 PRINT_KOM:
     LD HL,KOM
