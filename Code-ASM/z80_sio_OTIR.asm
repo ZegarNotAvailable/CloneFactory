@@ -2,6 +2,7 @@
 ; IF TESTING ON CA80-RC -> PAY ATTENTION TO MIK89 
 ;           (ADDRESS CONFLICT WITH SIO)
 ; 0E0H ~ 080H (A6 AND A5 IGNORED) -> USE 084H FOR SIO
+; https://klonca80.blogspot.com/2024/04/port-szeregowy-dla-ca80-to-proste.html#more
 ;*********************************************************************
         .cr z80                     
         .tf Z80_SIO_OTIR.hex,int   
