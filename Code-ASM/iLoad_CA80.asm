@@ -304,7 +304,7 @@ get_word        push    af
 ; the routine get_nibble is used only valid characters are accepted - the 
 ; input routine only accepts characters 0-9a-f.
 ;
-get_byte        EXX                     ; Save contents of B (and C)
+get_byte        PUSH    BC              ; Save contents of B (and C)
                 call    get_nibble      ; Get upper nibble
                 rlc     a
                 rlc     a
@@ -313,7 +313,7 @@ get_byte        EXX                     ; Save contents of B (and C)
                 ld      b, a            ; Save upper four bits
                 call    get_nibble      ; Get lower nibble
                 or      b               ; Combine both nibbles
-                EXX                     ; Restore B (and C)
+                POP     BC              ; Restore B (and C)
                 ret
 ;
 ; Get a hexadecimal digit from the serial line. This routine blocks until
@@ -440,8 +440,9 @@ print_byte      push    af              ; Save the contents of the registers
 ; Send a single character to the serial line (A contains the character):
 ;
 putc            
-                PUSH BC
-                PUSH DE
+                ; PUSH BC
+                ; PUSH DE
+                EXX
                 LD C,CHB_CNTR
                 LD B,0FFH
 TEST_TX:                            ;IN A CHAR TO SEND
@@ -457,8 +458,9 @@ EMPTY:
                 DEC C               ;CHX_DATA (X IS A OR B)
                 OUT (C),A
 PC1:
-                POP DE
-                POP BC
+                ; POP DE
+                ; POP BC
+                EXX
                 RET
                 ; push    af              ; Save the output char
                 ; ld      a, tx_opcode    ; A = IOS Serial Tx operation opcode
