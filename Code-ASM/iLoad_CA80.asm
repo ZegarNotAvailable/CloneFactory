@@ -376,10 +376,10 @@ to_upper        cp      'a'             ; Nothing to do if not lower case
 ;
 print_nibble    push    af              ; We won't destroy the contents of A
                 and     $f              ; Just in case...
-                add     a, '0'             ; If we have a digit we are done here.
-                cp      '9' + 1         ; Is the result > 9?
+                add     a, '0'          ; If we have a digit we are done here.
+                cp      3AH             ; Is the result > 9?
                 jr      c, print_nibble_1
-                add     a, 'A' - '0' - $a  ; Take care of A-F
+                add     A, 7            ; Take care of A-F
 print_nibble_1  call    putc            ; Print the nibble and
                 pop     af              ; restore the original value of A
                 ret
@@ -442,7 +442,7 @@ print_byte      push    af              ; Save the contents of the registers
 putc            
                 ; PUSH BC
                 ; PUSH DE
-                EXX
+                EXX                 ;FAST
                 LD C,CHB_CNTR
                 LD B,0FFH
 TEST_TX:                            ;IN A CHAR TO SEND
@@ -460,7 +460,7 @@ EMPTY:
 PC1:
                 ; POP DE
                 ; POP BC
-                EXX
+                EXX                 ;FAST
                 RET
                 ; push    af              ; Save the output char
                 ; ld      a, tx_opcode    ; A = IOS Serial Tx operation opcode
@@ -473,7 +473,7 @@ PC1:
 ; and read it, result is in A:
 ;
 getc    
-                EXX
+                EXX                 ;FASTER THEN PUSH
                 LD C,CHB_CNTR
 GC1:            XOR A
                 OUT (C),A           ;TEST RX
@@ -483,7 +483,7 @@ GC1:            XOR A
                 DEC C
                 DEC C               ;CHX_DATA (X IS A OR B)
                 IN A,(C)            ;READ CHAR
-                EXX
+                EXX                 ;INSTEAD OF POP
                 RET
                 ; in      a, (rx_port)    ; Read a char from serial
                 ; cp      $ff             ; It is = $FF?
@@ -512,7 +512,9 @@ SIO_INI:
 SIO_INIT_TABLE:
     .DB 18h             ;RESET CHANNEL
     .DB 04h             ;REG4
-    .DB 0C4H            ;x64 clock, 1 stop bit, no parity (7,3728MHz -> 115200 baud)
+    .DB 084H            ;x32 clock, 1 stop bit, no parity (1,8432MHz -> 58600 baud)
+;    .DB 0C4H            ;x64 clock, 1 stop bit, no parity (7,3728MHz -> 115200 baud)
+                        ;x64 clock, 1 stop bit, no parity (2,4576MHz -> 38400 baud)
     .DB 03H             ;REG3
     .DB 0C1H            ;Set receive config to 8 bits, RX ENABLE
     .DB 05h             ;REG5
