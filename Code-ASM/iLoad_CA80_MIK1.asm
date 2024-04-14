@@ -1,9 +1,9 @@
 ;*********************************************************************
 ; iLoad - Intel-Hex Loader - FOR CA80 WITH 8251 CARD (MIK1)
 ; IF TESTING WITH BOOTLOADER -> PAY ATTENTION TO ADDRESS
-;           (ADDRESS CONFLICT WITH SIO)
+;           (ADDRESS CONFLICT WITH BOOTLOADER)
 ; 0E8H IS USED -> USE 0E4H FOR SIO (NEED CUT AND SOLDER)
-; https://klonca80.blogspot.com/2024/04/port-szeregowy-dla-ca80-to-proste.html#more
+; https://klonca80.blogspot.com/2024/04/mik1-czyli-sonda-do-miksid-a.html#more
 ;*********************************************************************
         .cr z80                     
         .tf iLoad_MIK1.hex,int   
@@ -13,10 +13,10 @@
 ;*********************************************************************
         .sm code           ; 
         .or $FC00          ;
-;*************************************************************************
+;**************************************************************************
 DATA_8251    .EQ 0E4H    ;Data register on channel A                      *
 CONTR_8251   .EQ 0E5H    ;Control registers on channel A                  *
-;*************************************************************************
+;**************************************************************************
 ;==============================================================================
 ; Some changes added by Zegar. 12/04/2024
 ; iLoad - Intel-Hex Loader - S200718
@@ -101,7 +101,7 @@ tx_opcode       .eq    $01             ; IOS serial Tx operation opcode
                 call    puts
                 ld      hl, load_msg_2
                 call    puts
-                RST     30H
+                RST     30H             ; MONITOR CA80
 ;                halt
 ;
 ; Print starting address
@@ -115,14 +115,14 @@ print_addr      push    hl              ; Save starting addresss
                 call    print_word
                 call    crlf
                 call    crlf
-                RST 30H
+                RST     30H             ; MONITOR CA80
 ;
 ; Flush remaining input data (if any) and jump to the loaded program
 ;               
 ; flush_rx        in      a, (rx_port)    ; Read a char from serial port
 ;                 cp      $ff             ; Is <> $FF?
 ;                 jr      nz, flush_rx    ; Yes, read an other one
-;                jp      (hl)            ; No, so jump to starting addr
+;                 jp      (hl)            ; No, so jump to starting addr
 ;
 ; Message definitions
 ;
@@ -324,7 +324,7 @@ get_nibble      call    getc            ; Read a character
 ;                call    is_hex          ; Was it a hex digit?
 ;                jr      nc, get_nibble  ; No, get another character
 ;                call    nibble2val      ; Convert nibble to value
-nibble2val      cp      3AH             ; Is it a digit (less or equal '9')?
+nibble2val      cp      ':'             ; Is it a digit (less or equal '9')?
                 jr      c, nibble2val_1 ; Yes
                 sub     7               ; Adjust for A-F
 nibble2val_1    sub     '0'             ; Fold back to 0..15
@@ -354,7 +354,7 @@ is_hex_2        scf                     ; Set carry
 ;
 to_upper        cp      'a'             ; Nothing to do if not lower case
                 ret     c
-                cp      'z' + 1         ; > 'z'?
+                cp      '{'             ; > 'z'?
                 ret     nc              ; Nothing to do, either
                 and     $5f             ; Convert to upper case
                 ret
@@ -439,28 +439,6 @@ print_byte      push    af              ; Save the contents of the registers
 ;
 putc            
                 JR      SEND_CHAR
-                ; PUSH BC
-                ; PUSH DE
-;                 EXX                 ;FAST
-;                 LD C,CHB_CNTR
-;                 LD B,0FFH
-; TEST_TX:                            ;IN A CHAR TO SEND
-;                 LD E,0
-;                 OUT (C),E
-;                 IN E,(C)            ;READ REG0
-;                 BIT 2,E             ;TEST TRANSMIT BUFFER EMPTY
-;                 JR NZ,EMPTY
-;                 DJNZ TEST_TX
-;                 JR PC1
-; EMPTY:
-;                 DEC C
-;                 DEC C               ;CHX_DATA (X IS A OR B)
-;                 OUT (C),A
-; PC1:
-;                 ; POP DE
-;                 ; POP BC
-;                 EXX                 ;FAST
-;                 RET
                 ; push    af              ; Save the output char
                 ; ld      a, tx_opcode    ; A = IOS Serial Tx operation opcode
                 ; out     (opcode_port), a; Send to IOS the Tx operation opcode
@@ -481,9 +459,10 @@ getc
                 ; jp      z, getc         ; If yes jump until a valid char is received
                 ;ret
                 
-;*************************************************************************
+;************************************************************************
 ;*              I8251A INIT                                             *
-;*************************************************************************
+;*      SEE RADIOELEKTRONIK 1/1994                                      *
+;************************************************************************
 INIT_8251:
 	XOR	A
 	OUT	(CONTR_8251),A
@@ -499,9 +478,9 @@ INIT_8251:
 	OUT	(CONTR_8251),A
 	RET
 
-;*************************************************************************
+;************************************************************************
 ;*              I8251A READ CHAR                                        *
-;*************************************************************************
+;************************************************************************
 READ_CHAR:              
 	IN	A,(CONTR_8251)
 	AND	02H
@@ -509,9 +488,9 @@ READ_CHAR:
 	IN	A,(DATA_8251)
 	RET
 
-;*************************************************************************
+;************************************************************************
 ;*              I8251A SEND CHAR                                        *
-;*************************************************************************
+;************************************************************************
 SEND_CHAR:
 	PUSH	AF
 SEND1:
