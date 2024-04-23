@@ -512,7 +512,7 @@ SIO_INI:
 SIO_INIT_TABLE:
     .DB 18h             ;RESET CHANNEL
     .DB 04h             ;REG4
-    .DB 084H            ;x32 clock, 1 stop bit, no parity (1,8432MHz -> 58600 baud)
+    .DB 084H            ;x32 clock, 1 stop bit, no parity (1,8432MHz -> 57600 baud)
 ;    .DB 0C4H            ;x64 clock, 1 stop bit, no parity (7,3728MHz -> 115200 baud)
                         ;x64 clock, 1 stop bit, no parity (2,4576MHz -> 38400 baud)
     .DB 03H             ;REG3
