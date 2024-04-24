@@ -36,7 +36,7 @@ CONTR_8251   .EQ 0E5H    ;Control registers on channel A                  *
 ;  +-------+
 ;  ! $0000 !    not used (area available for loading)
 ;  !  ---  !
-;  ! $FCEF !
+;  ! $FAFF !
 ;  +-------+
 ;  ! $FB00 !    iLoad (local data area + program)
 ;  !  ---  !
