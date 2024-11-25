@@ -15,6 +15,7 @@
 #define CR 0xd                          // ASCII CR for GH CR-LF issue
 #define RC2014 1                        // 1 - RC2014, 0 - CA80mini
 #define TOUCH 1                         // 1 - with touch, 0 - without
+#define TOUCH_MOD                       // Zakomentuj jesli nie ma modułu MPR121
 //#define Z180                          // Zakomentuj jesli Z80
 //#define DEBUG
 // ------------------------------------------------------------------------------
@@ -1595,6 +1596,9 @@ void czytajKlawiature()
       {
         if ((touchstatus & (1 << j)))
           column = (j - 4);       //
+#ifdef TOUCH_MOD
+        column = 5 - column;
+#endif  // TOUCH_MOD
       }
       keyCode = (row ^ 0xF) | ( column << 4 ); // Obliczamy kod klawisza
     }
