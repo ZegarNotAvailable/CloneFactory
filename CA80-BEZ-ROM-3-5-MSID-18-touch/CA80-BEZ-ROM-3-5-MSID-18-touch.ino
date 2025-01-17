@@ -50,7 +50,7 @@ byte CA80_DISP_MEM[9] =
 byte CA80_STACK_MEM[17];
 byte newData = 0;                             // For Z80 registers
 byte data[] = {0x01, 0x02, 0x03, 0x04, 0x05}; // For disassembler
-byte timeout = 0;
+volatile byte timeout = 0;
 byte CA80r = 0;
 
 // ------------------------------------------------------------------------------
@@ -782,7 +782,7 @@ void showHLdata()
     hl++;
     Serial.write(' ');
     memHL = CA80_DATA_MEM[i];
-    if ((memHL > 20) && (memHL <= 'z'))
+    if ((memHL > 0x20) && (memHL <= 'z'))
     {
       Serial.write(memHL);
     }
