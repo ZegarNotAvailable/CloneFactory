@@ -5,17 +5,19 @@
 ; FORMAT "PLIKOW" ZGODNY Z UZYWANYM W ZLECENIACH *4 *5 *6 CA80
 ;       NUMER SEKTORA JEST ODPOWIEDNIKIEM NAZWY PROGRAMU.
 ; PROCEDURA FMAG dziala jak OMAG (MIK08 REJESTR B=NR SEKTORA) 
+;         DODATKOWE ZLECENIA DO TRANSMISJI SZEREGOWEJ
+;             TWORZENIE I ODCZYT PLIKOW INTEL HEX
 ;                   (C) Zegar & Nadolic
 ;*********************************************************************
         .cr z80                     
-        .tf CAFL3.hex,int   
-        .lf CAFL3.lst
-        .sf CAFL3.sym       
+        .tf CAFL3B.hex,int   
+        .lf CAFL3B.lst
+        .sf CAFL3B.sym       
         .in ca80.inc
 SYS8255 .eq 0F0H         
 CIM     .eq 184H
 GSTAT   .eq 0FFB3H
-SAVE_CHAR .EQ 0FFE7H
+SAVE_CHAR .EQ 0FFE7H    ; Zmienne bufora kolowego UART
 write_ptr .EQ 0FFE5H    ; Write pointer (offset from BUFFER_START)
 read_ptr: .EQ 0FFE6H    ; Read pointer (offset from BUFFER_START)
 A5      .eq 7555H       ;adres dla klucza FLASH
@@ -142,11 +144,11 @@ CTBLX:
         .dw Z7             ;Zapisz bufor do sektora
         .dw Z8             ;Wyslij plik przez UART (utworzony w buforze Z3, Z4 i Z5)
         .dw Z9             ;Czytaj plik z UART (do RAM jak z magnetofonu)
-        .dw ZA             ;Wyslij sektor przez wy. magnet.
-        .dw ZB             ;Ustaw 3,5 kHz na wy. magnet.
+        .dw ZA             ;Wyslij obszar jako IntelHEX przez UART (MIK1)
+        .dw ZB             ;Czytaj plik Intel HEX z UART (iLoad MIK1)
         .dw ZC             ;Kopiuj dane do EEPROM W U11
-        .dw ZD             ;Disable SDP (np. MK28C64) W U11
-        .dw ZE             ;Enable SDP (lub np. AT28C64) W U11
+        .dw ZD             ;Disable SDP (np. MK28C64A) W U11
+        .dw ZE             ;Enable SDP (lub np. AT28C64B) W U11
         .dw ZF             ;SzukaJ nazw programow        
 LCTX    .eq $-CTBLX/2
 CIFL:
@@ -360,7 +362,7 @@ T_FREE:
         .db EOM
 ;*********************************************************************
 Z4:   ;Zapisz RAM do bufora
-      ;[4][ADR1[.][ADR2][.][NAZWA][=]
+      ;[4][ADR1][.][ADR2][.][NAZWA][=]
         inc C            ; 3 parametry
         call EXPR
         .db 40H
@@ -484,85 +486,100 @@ BBYTE:  push DE
         pop DE
         call DELAY
         ret
-;*********************************************************************
-ZA:     ;Wyslij sektor przez wy. magnet.
-        ;[A][NR SEKTORA][=]
-        dec C              ;jeden parametr
-        call EXPR
-        .db 20H
-        pop BC
-        ld B,C        
-        ld A,C             ; nr sektora
-FLMAG:  ;wej: A - numer sektora
-        ;zawartosc sektora zostanie wyslana tak, jak jest.
-        ;jezeli dane poprawne, na wysw. nazwa i adres bloku
-        ;nalezy wysylac tylko zapisane sektory.
-        LD (SECT),A
-        call SYNCH
-        ld IX,FL
-FLM1:   ld HL,MARK
-FLM0:   call RFLBYT
-        ld C,A
-        call PBYTE  ;monitor CA80 - wyslanie bajtu na magnetofon
-        ld A,c      ;PBYTE zmienia AF
-FLX:    cp L
-        jr NZ,FLM0
-        call RFLBYT
-        ld C,A
-        call PBYTE  ;monitor CA80 - wyslanie bajtu na magnetofon
-        ld A,c      ;PBYTE zmienia AF
-        cp H
-        jr NZ,FLX
-        ;znaleziono MARK
-        call RFLBYT
-        ld C,A      ;NAZWA
-        call PBYTE  ;monitor CA80 - wyslanie bajtu na magnetofon
-        ld A,c      ;PBYTE zmienia AF
-        rst LBYTE   ;wyswietlenie nazwy
-        .db 25H
-        call RFLBYT ;DLUGOSC
-        ld B,A          
-        call PBYTE  ;monitor CA80 - wyslanie bajtu na magnetofon
-        call RFLBYT
-        ld L,A      ;mlodszy bajt adresu
-        call PBYTE  ;monitor CA80 - wyslanie bajtu na magnetofon
-        call RFLBYT
-        ld H,A      ;starszy bajt adresu
-        call PBYTE  ;monitor CA80 - wyslanie bajtu na magnetofon
-        rst LADR    ;wyswietlenie adresu
-        .db 40H
-        call RFLBYT ;suma        
-        call PBYTE  ;monitor CA80 - wyslanie bajtu na magnetofon
-        ld A,B
-        or A
-        jr Z,FLM1
-        ;blok danych
-FLM2:   call RFLBYT        
-        call PBYTE  ;monitor CA80 - wyslanie bajtu na magnetofon
-        djnz FLM2       
-        call RFLBYT ;suma      
-        call PBYTE  ;monitor CA80 - wyslanie bajtu na magnetofon
-        jr  FLM1    ;wyslij nastepny sektor
-                
-        
-RFLBYT: ;odczyt bajtu z flash bez sumy kontrolnej
-        ld A,(IX+0)
-        inc IX        
-        ld C,A
-        ld A,0F0H             ;sprawdzamy czy nadal adres sektora
-        .db 0DDH,0A4H         ;and IXH
-        cp 60H
-        jp NZ,CAFL
-        ret
-        
 
-SYNCH:  push BC
-        ld B,8  ;liczba bajtow synchronizacji (w CA80 bylo 32)
-.pbx    xor A
-        call PBYTE
-        djnz .pbx
-        pop BC
+ZA_msg: .DB   "Open LOG file in terminal (TeraTerm). ", eos
+ZAA_msg: .DB  "Then enter [ADR1][.][ADR2][=] (ca80). ", eos
+;*********************************************************************
+ZA:     ;Wyslij obszar jako IntelHEX przez UART (MIK1)
+;*********************************************************************
+      ;[A][ADR1][.][ADR2][=]
+        ld      hl, ZA_msg
+        call    puts
+        call    crlf
+        ld      hl, ZAA_msg
+        call    puts
+        call    crlf
+        call    crlf
+        CALL    FLUSH_TX
+        call EXPR
+        .db 40H
+        pop DE           ;ADR2
+        pop HL           ;ADR1        
+.wr0    push HL
+        ld A,(DLUG)      ;dlug. bloku danych 
+        ld C,A
+        ld B,0
+.wr1    inc B
+        dec C
+        jr Z,.wr2
+        call HILO
+        jr NC,.wr1
+        ;B - wyliczona dlugosc bloku danych
+.wr2    ld A,':'
+        call putc
+        pop HL
+        push DE
+        ld D,0               ;Zerow. sumy kontrolnej
+        LD A,B               ; DLUGOSC REKORDU
+        call XBYT
+        ld A,B
+        rst LBYTE
+        .db 25H
+        LD A, H
+        CALL XBYT               ; Wyślij wyższy bajt adresu
+        LD A, L
+        CALL XBYT               ; Wyślij niższy bajt adresu
+        LD A, 0x00              ; Typ rekordu (00 - dane)
+        CALL XBYT               ; Wyślij typ rekordu
+        rst LADR
+        .db 40H
+        ;zapisanie bloku danych do bufora
+.wr3    ld A,(HL)
+        call XBYT
+        inc HL
+        djnz .wr3
+        ;SUMD - suma kontrolna bloku danych
+        xor A
+        sub D                 ;-SUMD
+        call XBYT
+        CALL CRLF
+        CALL FLUSH_TX
+        pop DE
+        dec HL
+        call HILO
+        jr NC,.wr0              ; NASTEPNY REKORD
+        ;DE<HL - koniec zapisu
+        ld A,':'
+        call putc
+        ld D,0                  ;Zerow. sumy kontrolnej
+        XOR A                   ; DLUGOSC REKORDU
+        call XBYT
+        rst LBYTE
+        .db 25H
+        LD H,A
+        CALL XBYT               ; Wyślij wyższy bajt adresu
+        LD L,A
+        CALL XBYT               ; Wyślij niższy bajt adresu
+        LD A, 0x01              ; Typ rekordu (01 - EOF)
+        CALL XBYT               ; Wyślij typ rekordu
+        ;SUMD - suma kontrolna bloku EOF
+        xor A
+        sub D                 ;-SUMD
+        call XBYT
+        rst LADR
+        .db 40H
+        CALL CRLF
+        CALL FLUSH_TX
         ret
+
+XBYT:   ;WYSLIJ BYTE PRZEZ UART Z OBLICZENIEM SUMY KONTROLNEJ
+        ld C,A
+        add A,D                   ;suma modulo 256
+        ld D,A
+        ld A,C
+XBYTE:  CALL print_byte
+        ret
+
 ;*********************************************************************        
 Z6:     ;Czytaj sektor do RAM
         ;[6][NR SEKTORA][=]
@@ -734,10 +751,22 @@ Z1:     ;Szukaj wolny sektor
 BRAK:
         RET
         
-        
+Z9_msg: .DB   "Send file from PC formatted FDE2 (ca80) [NAZWA][=].", eos
+Z9_HLP: .DB   "Use Setup->SerialPort->TransmitDelay=1 (TeraTerm).", eos      
 ;*********************************************************************
 Z9:     ;Czytaj plik z UART do RAM
         ;[9][NR SEKTORA][=]
+        ld      hl, Z9_msg
+        call    puts
+        call    crlf
+        ld      hl, Z9_HLP
+        call    puts
+        call    crlf
+        ld      hl, HELP_msg
+        call    puts
+        call    crlf
+        call    crlf
+        CALL    FLUSH_TX
         dec C              ;jeden parametr
         call EXPR
         .db 20H
@@ -803,6 +832,7 @@ UREOF:
         jp (HL)               ;skok do programu uzytkownika
 .monjes
         ld (0FFA9H),HL        ;adr PC uzytkownika (PLOC-1)
+        call    crlf
         CALL FLUSH_TX         ;reszta znaków na terminal
         ret
 
@@ -814,11 +844,32 @@ URFBYT:  ;odczyt bajtu z UART
         or A
         ld A,C
         ret
+
+SYNCH:  push BC
+        ld B,8  ;liczba bajtow synchronizacji (w CA80 bylo 32)
+.pbx    xor A
+        call PBYTE
+        djnz .pbx
+        pop BC
+        ret
+
+Z8A_msg: .DB   "Open LOG file in terminal (TeraTerm) then press [=] (ca80) ", eos
+Z8_msg:  .DB    "First use commands [3],[4] and [5]. ",eos
 ;*********************************************************************
 ;       Wyslij plik przez UART (utworzony w buforze Z3, Z4 i Z5)  
 ;       Nie wysyłamy żadnych komunikatów, żeby nie zaśmiecić pliku.
 ;       Odbiór np. przez LOG w programie Tera Term.
 Z8:
+        ld      hl, Z8_msg
+        call    puts
+        call    crlf
+        ld      hl, Z8A_msg
+        call    puts
+        call    crlf
+        call    crlf
+        CALL    FLUSH_TX
+        CALL    CI
+        JP      NC,CAFL
         LD HL,BUFOR
         LD DE,(BUFEND)
         DEC DE
@@ -837,21 +888,405 @@ Z8:
         CALL print_byte
         CALL HILO
         JR NC,.LOOP
+        call    crlf
         CALL FLUSH_TX
         ret
         
-KOMZB:  .db 73H,39H,66H,0,5CH,54H,EOM   ;pc4_on     
 ;*********************************************************************
-ZB:     ;Ustaw 3,5 kHz na wy. magnet.
-        ld A,9
-        out (SYS8255+CTRL),A
-        ld HL,KOMZB
-        call PRINT
-        .db 60H
-        call CI
-        ld A,8
-        out (SYS8255+CTRL),A
-        ret
+ZB:
+;==============================================================================
+; Some changes added by Zegar. 23/04/2024
+;==============================================================================
+; iLoad - Intel-Hex Loader - S200718
+; Z80-MBC2 - HW ref: A040618 
+;
+; This program is embedded into:
+;   IOS-LITE  - I/O Subsystem - S220618 or newer (until otherwise stated)
+;   IOS - I/O Subsystem - S220718 or newer (until otherwise stated)
+;
+; Note: I've used a large part of the source from this site: 
+;       http://www.vaxman.de/projects/tiny_z80/
+;==============================================================================
+;
+;  Memory layout:
+;
+;  +-------+
+;  ! $0000 !    not used (area available for loading)
+;  !  ---  !
+;  ! $FAFF !
+;  +-------+
+;  ! $FB00 !    iLoad (local data area + program)
+;  !  ---  !
+;  ! $FF06 !
+;  +-------+
+;  ! $FF07 !    not used
+;  !  ---  !    (reserved for CA80)
+;  ! $FFFF !
+;  +-------+
+;
+;
+;==================================================================================
+
+;******************************************************************************
+;***
+;*** Main program
+;***
+;******************************************************************************
+;
+; Costants definitions
+;
+loader_ram      .equ    $FB00           ; First RAM location used
+eos             .equ    $00             ; End of string
+cr              .equ    $0d             ; Carriage return
+lf              .equ    $0a             ; Line feed
+space           .equ    $20             ; Space
+;
+; iLoad memory starting area
+;
+;
+; Print a welcome message
+;
+                ; CALL    INIT_8251
+                ; CALL    INIT_BUFFER
+                ld      hl, hello_msg
+                call    puts
+                call    crlf
+                ld      hl, HELP_msg
+                call    puts
+                call    crlf
+                call    crlf
+                CALL    FLUSH_TX
+                
+;
+; Load an INTEL-Hex file into memory
+;
+                call    ih_load         ; Load Intel-Hex file
+                ld      a, $ff          ; Test for errors
+                cp      h
+                jr      nz, print_addr  ; Jump if B<>$FF (no errors)
+                cp      l
+                jr      nz, print_addr  ; Jump if C<>$FF (no errors)
+;
+; Print an error message and halt cpu
+;               
+                ld      hl, ih_load_msg_4
+                call    puts
+                ld      hl, load_msg_2
+                call    puts
+                CALL    FLUSH_TX
+                RST     30H             ; MONITOR CA80
+;                halt
+;
+; Print starting address
+;
+print_addr      push    hl              ; Save starting addresss
+                ld      hl, ih_load_msg_4
+                call    puts
+                ld      hl, load_msg_1
+                call    puts
+                pop     hl              ; Load starting addresss
+                call    print_word
+                call    crlf
+                call    crlf
+                CALL    FLUSH_TX
+                RST     30H             ; MONITOR CA80
+;
+; Message definitions
+;
+hello_msg       .DB   "iLoad - Intel-Hex Loader - for CA80", eos
+HELP_msg        .DB   "Use File->SendFile (TeraTerm).", eos
+load_msg_1      .DB   "Starting Address: ", eos
+load_msg_2      .DB   "Load error - System halted", eos
+ih_load_msg_1   .DB   "Waiting input stream...", eos
+ih_load_msg_2   .DB   "Syntax error!", eos
+ih_load_msg_3   .DB   "Checksum error!", eos 
+ih_load_msg_4   .DB   "iLoad: ", eos
+ih_load_msg_5   .DB   "Address violation!", eos
+              
+;******************************************************************************
+;***
+;*** Subroutines
+;***
+;******************************************************************************
+;
+; Load an INTEL-Hex file (a ROM image) into memory. This routine has been 
+; more or less stolen from a boot program written by Andrew Lynch and adapted
+; to this simple Z80 based machine.
+;
+; The first address in the INTEL-Hex file is considerd as the Program Starting Address
+; and is stored into HL.
+;
+; If an error is found HL=$FFFF on return.
+;
+; The INTEL-Hex format looks a bit awkward - a single line contains these 
+; parts:
+; ':', Record length (2 hex characters), load address field (4 hex characters),
+; record type field (2 characters), data field (2 * n hex characters),
+; checksum field. Valid record types are 0 (data) and 1 (end of file).
+;
+; Please note that this routine will not echo what it read from stdin but
+; what it "understood". :-)
+; 
+ih_load         push    af
+                push    de
+                push    bc
+                ld      bc, $ffff       ; Init BC = $FFFF
+                ld      hl, ih_load_msg_1
+                call    puts
+                call    crlf
+ih_load_loop    call    getc            ; Get a single character
+                cp      cr              ; Don't care about CR
+                jr      z, ih_load_loop
+                cp      lf              ; ...or LF
+                jr      z, ih_load_loop
+                cp      space           ; ...or a space
+                jr      z, ih_load_loop
+                call    to_upper        ; Convert to upper case
+                call    putc            ; Echo character
+                cp      ':'             ; Is it a colon?                
+                jp      nz, ih_load_err ; No - print an error message
+                call    get_byte        ; Get record length into A
+                ld      d, a            ; Length is now in D
+                ld      e, $0           ; Clear checksum
+                call    ih_load_chk     ; Compute checksum
+                call    get_word        ; Get load address into HL
+                ld      a, $ff          ; Save first address as the starting addr
+                cp      b
+                jr      nz, update_chk  ; Jump if B<>$FF
+                cp      c
+                jr      nz, update_chk  ; Jump if C<>$FF
+                ld      b, h            ; Save starting address in BC
+                ld      c, l
+update_chk      ld      a, h            ; Update checksum by this address
+                call    ih_load_chk
+                ld      a, l
+                call    ih_load_chk
+                call    get_byte        ; Get the record type
+                call    ih_load_chk     ; Update checksum
+                cp      $1              ; Have we reached the EOF marker?
+                jr      nz,ih_load_data ; No - get some data
+                call    get_byte        ; Yes - EOF, read checksum data
+                call    ih_load_chk     ; Update our own checksum
+                ld      a, e
+                and     a               ; Is our checksum zero (as expected)?
+                jr      z, ih_load_exit ; Yes - exit this routine
+ih_load_chk_err call    crlf            ; No - print an error message
+                ld      hl, ih_load_msg_4
+                call    puts
+                ld      hl, ih_load_msg_3
+                call    puts
+                ld      bc, $ffff
+                jr      ih_load_exit    ; ...and exit
+ih_load_data    ld      a, d            ; Record length is now in A
+                and     a               ; Did we process all bytes?
+                jr      z, ih_load_eol  ; Yes - process end of line
+                call    get_byte        ; Read two hex digits into A
+                call    ih_load_chk     ; Update checksum
+                push    hl              ; Check if HL < iLoad used space
+                push    bc
+                and     a               ; Reset flag C
+                ld      bc, loader_ram  ; BC = iLoad starting area
+                sbc     hl, bc          ; HL = HL - iLoad starting area
+                pop     bc
+                pop     hl
+                jr      c,store_byte    ; Jump if HL < iLoad starting area
+                call    crlf            ; Print an error message
+                ld      hl, ih_load_msg_4
+                call    puts
+                ld      hl, ih_load_msg_5
+                call    puts
+                ld      bc, $ffff       ; Set error flag
+                jr      ih_load_exit    ; ...and exit
+store_byte      ld      (hl), a         ; Store byte into memory
+                inc     hl              ; Increment pointer
+                dec     d               ; Decrement remaining record length
+                jr      ih_load_data    ; Get next byte
+ih_load_eol     call    get_byte        ; Read the last byte in the line
+                call    ih_load_chk     ; Update checksum
+                ld      a, e
+                and     a               ; Is the checksum zero (as expected)?
+                jr      nz, ih_load_chk_err
+                call    crlf
+                jp      ih_load_loop    ; Yes - read next line
+ih_load_err     call    crlf
+                ld      hl, ih_load_msg_4
+                call    puts            ; Print error message
+                ld      hl, ih_load_msg_2
+                call    puts
+                ld      bc, $ffff
+ih_load_exit    call    crlf
+                call    FLUSH_TX
+                ld      h, b            ; HL = BC
+                ld      l, c
+                pop     bc              ; Restore registers
+                pop     de
+                pop     af
+                ret
+;
+; Compute E = E - A
+;
+ih_load_chk     push    bc
+                ld      c, a            ; All in all compute E = E - A
+                ld      a, e
+                sub     c
+                ld      e, a
+                ld      a, c
+                pop     bc
+                ret
+
+;------------------------------------------------------------------------------
+;---
+;--- String subroutines
+;---
+;------------------------------------------------------------------------------
+
+;
+; Send a string to the serial line, HL contains the pointer to the string:
+;
+puts            push    af
+                push    hl
+puts_loop       ld      a, (hl)
+                cp      eos             ; End of string reached?
+                jr      z, puts_end     ; Yes
+                call    putc
+                inc     hl              ; Increment character pointer
+                jr      puts_loop       ; Transmit next character
+puts_end        pop     hl
+                pop     af
+                ret
+;
+; Get a word (16 bit) in hexadecimal notation. The result is returned in HL.
+; Since the routines get_byte and therefore get_nibble are called, only valid
+; characters (0-9a-f) are accepted.
+;
+get_word        push    af
+                call    get_byte        ; Get the upper byte
+                ld      h, a
+                call    get_byte        ; Get the lower byte
+                ld      l, a
+                pop     af
+                ret
+;
+; Get a byte in hexadecimal notation. The result is returned in A. Since
+; the routine get_nibble is used only valid characters are accepted - the 
+; input routine only accepts characters 0-9a-f.
+;
+get_byte        push    bc              ; Save contents of B (and C)
+                call    get_nibble      ; Get upper nibble
+                rlc     a
+                rlc     a
+                rlc     a
+                rlc     a
+                ld      b, a            ; Save upper four bits
+                call    get_nibble      ; Get lower nibble
+                or      b               ; Combine both nibbles
+                pop     bc              ; Restore B (and C)
+                ret
+;
+; Get a hexadecimal digit from the serial line. This routine blocks until
+; a valid character (0-9a-f) has been entered. A valid digit will be echoed
+; to the serial line interface. The lower 4 bits of A contain the value of 
+; that particular digit.
+;
+get_nibble      call    getc            ; Read a character
+                call    to_upper        ; Convert to upper case
+                call    is_hex          ; Was it a hex digit?
+                jr      nc, get_nibble  ; No, get another character
+                call    nibble2val      ; Convert nibble to value
+                call    print_nibble
+                ret
+;
+; is_hex checks a character stored in A for being a valid hexadecimal digit.
+; A valid hexadecimal digit is denoted by a set C flag.
+;
+is_hex          cp      'G'             ; Greater than 'F'?
+                ret     nc              ; Yes
+                cp      '0'             ; Less than '0'?
+                jr      nc, is_hex_1    ; No, continue
+                ccf                     ; Complement carry (i.e. clear it)
+                ret
+is_hex_1        cp      ':'             ; Less or equal '9*?
+                ret     c               ; Yes
+                cp      'A'             ; Less than 'A'?
+                jr      nc, is_hex_2    ; No, continue
+                ccf                     ; Yes - clear carry and return
+                ret
+is_hex_2        scf                     ; Set carry
+                ret
+;
+; Convert a single character contained in A to upper case:
+;
+to_upper        cp      'a'             ; Nothing to do if not lower case
+                ret     c
+                cp      '{'             ; > 'z'?
+                ret     nc              ; Nothing to do, either
+                and     $5f             ; Convert to upper case
+                ret
+;
+; Expects a hexadecimal digit (upper case!) in A and returns the
+; corresponding value in A.
+;
+nibble2val      cp      ':'             ; Is it a digit (less or equal '9')?
+                jr      c, nibble2val_1 ; Yes
+                sub     7               ; Adjust for A-F
+nibble2val_1    sub     '0'             ; Fold back to 0..15
+                and     $f              ; Only return lower 4 bits
+                ret
+;
+; Print_nibble prints a single hex nibble which is contained in the lower 
+; four bits of A:
+;
+print_nibble    push    af              ; We won't destroy the contents of A
+                and     $f              ; Just in case...
+                add     a, '0'          ; If we have a digit we are done here.
+                cp      ':'             ; Is the result > 9?
+                jr      c, print_nibble_1
+                add     a,7             ; Take care of A-F
+print_nibble_1  call    putc            ; Print the nibble and
+                pop     af              ; restore the original value of A
+                ret
+;
+; Send a CR/LF pair:
+;
+crlf            push    af
+                ld      a, cr
+                call    putc
+                ld      a, lf
+                call    putc
+                pop     af
+                ret
+;
+; Print_word prints the four hex digits of a word to the serial line. The 
+; word is expected to be in HL.
+;
+print_word      push    hl
+                push    af
+                ld      a, h
+                call    print_byte
+                ld      a, l
+                call    print_byte
+                pop     af
+                pop     hl
+                ret
+;
+; Print_byte prints a single byte in hexadecimal notation to the serial line.
+; The byte to be printed is expected to be in A.
+;
+print_byte      push    af              ; Save the contents of the registers
+                push    bc
+                ld      b, a
+                rrca
+                rrca
+                rrca
+                rrca
+                call    print_nibble    ; Print high nibble
+                ld      a, b
+                call    print_nibble    ; Print low nibble
+                pop     bc              ; Restore original register contents
+                pop     af
+                ret
+
+;------------------------------------------------------------------------------
 ;*********************************************************************        
 Z2:     ; Kasuj sektor [2][NR SEKTORA][=]
         ; Jeżeli wpiszemy FF - 
@@ -1204,161 +1639,7 @@ DELAY_ZX:
   JR NZ,.DEL
   POP AF
   RET         
-
-;------------------------------------------------------------------------------
-;---
-;--- String subroutines
-;---
-;------------------------------------------------------------------------------
-eos             .equ    $00             ; End of string
-cr              .equ    $0d             ; Carriage return
-lf              .equ    $0a             ; Line feed
 ;
-; Send a string to the serial line, HL contains the pointer to the string:
-;
-puts            push    af
-                push    hl
-puts_loop       ld      a, (hl)
-                cp      eos             ; End of string reached?
-                jr      z, puts_end     ; Yes
-                call    putc
-                inc     hl              ; Increment character pointer
-                jr      puts_loop       ; Transmit next character
-puts_end        pop     hl
-                pop     af
-                ret
-;
-; Get a word (16 bit) in hexadecimal notation. The result is returned in HL.
-; Since the routines get_byte and therefore get_nibble are called, only valid
-; characters (0-9a-f) are accepted.
-;
-get_word        push    af
-                call    get_byte        ; Get the upper byte
-                ld      h, a
-                call    get_byte        ; Get the lower byte
-                ld      l, a
-                pop     af
-                ret
-;
-; Get a byte in hexadecimal notation. The result is returned in A. Since
-; the routine get_nibble is used only valid characters are accepted - the 
-; input routine only accepts characters 0-9a-f.
-;
-get_byte        push    bc              ; Save contents of B (and C)
-                call    get_nibble      ; Get upper nibble
-                rlc     a
-                rlc     a
-                rlc     a
-                rlc     a
-                ld      b, a            ; Save upper four bits
-                call    get_nibble      ; Get lower nibble
-                or      b               ; Combine both nibbles
-                pop     bc              ; Restore B (and C)
-                ret
-;
-; Get a hexadecimal digit from the serial line. This routine blocks until
-; a valid character (0-9a-f) has been entered. A valid digit will be echoed
-; to the serial line interface. The lower 4 bits of A contain the value of 
-; that particular digit.
-;
-get_nibble      call    getc            ; Read a character
-                call    to_upper        ; Convert to upper case
-                call    is_hex          ; Was it a hex digit?
-                jr      nc, get_nibble  ; No, get another character
-                call    nibble2val      ; Convert nibble to value
-                call    print_nibble
-                ret
-;
-; is_hex checks a character stored in A for being a valid hexadecimal digit.
-; A valid hexadecimal digit is denoted by a set C flag.
-;
-is_hex          cp      'G'             ; Greater than 'F'?
-                ret     nc              ; Yes
-                cp      '0'             ; Less than '0'?
-                jr      nc, is_hex_1    ; No, continue
-                ccf                     ; Complement carry (i.e. clear it)
-                ret
-is_hex_1        cp      ':'             ; Less or equal '9*?
-                ret     c               ; Yes
-                cp      'A'             ; Less than 'A'?
-                jr      nc, is_hex_2    ; No, continue
-                ccf                     ; Yes - clear carry and return
-                ret
-is_hex_2        scf                     ; Set carry
-                ret
-;
-; Convert a single character contained in A to upper case:
-;
-to_upper        cp      'a'             ; Nothing to do if not lower case
-                ret     c
-                cp      '{'             ; > 'z'?
-                ret     nc              ; Nothing to do, either
-                and     $5f             ; Convert to upper case
-                ret
-;
-; Expects a hexadecimal digit (upper case!) in A and returns the
-; corresponding value in A.
-;
-nibble2val      cp      ':'             ; Is it a digit (less or equal '9')?
-                jr      c, nibble2val_1 ; Yes
-                sub     7               ; Adjust for A-F
-nibble2val_1    sub     '0'             ; Fold back to 0..15
-                and     $f              ; Only return lower 4 bits
-                ret
-;
-; Print_nibble prints a single hex nibble which is contained in the lower 
-; four bits of A:
-;
-print_nibble    push    af              ; We won't destroy the contents of A
-                and     $f              ; Just in case...
-                add     a, '0'          ; If we have a digit we are done here.
-                cp      ':'             ; Is the result > 9?
-                jr      c, print_nibble_1
-                add     a,7             ; Take care of A-F
-print_nibble_1  call    putc            ; Print the nibble and
-                pop     af              ; restore the original value of A
-                ret
-;
-; Send a CR/LF pair:
-;
-crlf            push    af
-                ld      a, cr
-                call    putc
-                ld      a, lf
-                call    putc
-                pop     af
-                ret
-;
-; Print_word prints the four hex digits of a word to the serial line. The 
-; word is expected to be in HL.
-;
-print_word      push    hl
-                push    af
-                ld      a, h
-                call    print_byte
-                ld      a, l
-                call    print_byte
-                pop     af
-                pop     hl
-                ret
-;
-; Print_byte prints a single byte in hexadecimal notation to the serial line.
-; The byte to be printed is expected to be in A.
-;
-print_byte      push    af              ; Save the contents of the registers
-                push    bc
-                ld      b, a
-                rrca
-                rrca
-                rrca
-                rrca
-                call    print_nibble    ; Print high nibble
-                ld      a, b
-                call    print_nibble    ; Print low nibble
-                pop     bc              ; Restore original register contents
-                pop     af
-                ret
-
 ;------------------------------------------------------------------------------
 ;---
 ;--- I/O subroutines
@@ -1745,9 +2026,24 @@ TEXT_BUSY:
    ;.db 0AAh, 0AAh, 0AAh, 0AAh ; po tym markerze /2x AAAA/ nazwa programu
    ;################################################
  .db 0AAh, 0AAh, 0AAh, 0AAh ; marker nazwy
- .db "Magnetofon2 CA80"      ; nazwa programu, max 16 znaków /dla LCD 4x 20 znakow w linii/
+ .db "Magnetofon3 CA80"      ; nazwa programu, max 16 znaków /dla LCD 4x 20 znakow w linii/
  .db EOM                    ; koniec tekstu
 
 ; koniec zabawy. :-)
 
-              
+;********************************************************
+;       ZAPIS DO SEKTORA "0" FLASH NOWEJ WERSJI CAFL
+;               USUWA WCZESNIEJSZA WERSJE !!!
+;********************************************************  
+        .OR 4FE0H
+SAVEFL0:
+        XOR A
+        ;LD (SECT),A             ; SEKTOR "0"
+        call SST_S_ERASE        ; KASUJ SEKTOR
+        ld HL,4000H             ; U10 
+        ld DE,FL                ; FLASH
+        ld BC,BUF_LEN           ; DLUGOSC SEKTORA (4 KB)
+.next   call SST_B_KEY          ; PRZYGOTUJ KOMORKE DO ZAPISU
+        ldi                     ; PRZEPISZ Z RAM DO FLASH
+        jp PE,.next             ; POWTORZ
+        ret              
