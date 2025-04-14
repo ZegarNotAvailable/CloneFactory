@@ -64,7 +64,7 @@ File CA80-MLT.HEX (Code-HEX/CA80-MLT.HEX)
 In addition to the basic CA80 monitor (MIK290), full "tape recorder" software with functions supporting HEX files, redirected from 2000H. 
 You can load it from SD card using CA80-boot module, or program EPROM. It also works without "flash" module.
 
-![CA80 during operation.](https://github.com/ZegarNotAvailable/CloneFactory/blob/main/HardWare/Pictures/CA80-RCbus-Flash.jpg)
+![CA80 big sandwich.](https://github.com/ZegarNotAvailable/CloneFactory/blob/main/CA80-mini/HW/Pics/Kanapka-big.jpg)
 
 ## Code for CA80 with Msid
 
