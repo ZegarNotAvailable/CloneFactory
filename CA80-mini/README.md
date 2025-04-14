@@ -39,6 +39,30 @@ They are not needed when we use the CA80-bootloader module.
   - displays successive display digits multiplexed.
   - Checks if the "M" key has been pressed.
   - Counts down seconds, minutes, hours... years in RTC.
+ 
+### CA80-multi module.
+
+This is an extended replacement for MIK89. Adapted to the CA80-mini format, it allows you to build a "sandwich" computer.
+
+![CA80-multi](https://github.com/ZegarNotAvailable/CloneFactory/blob/main/CA80-mini/HW/Pics/CA-MULTI-ASEMBLED.jpg)
+
+Includes:
+- 8255,
+- Z80CTC,
+- 4 MHz generator,
+- NMI divider,
+- ZU64 connector,
+- Z80SIO,
+- 2.4576 MHz generator,
+- Port A and Port B serial connectors,
+- LCD display interface (HD44780).
+
+### Software.
+
+File CA80-MLT.HEX (Code-HEX/CA80-MLT.HEX)
+
+In addition to the basic CA80 monitor (MIK290), full "tape recorder" software with functions supporting HEX files, redirected from 2000H. 
+You can load it from SD card using CA80-boot module, or program EPROM. It also works without "flash" module.
 
 ![CA80 during operation.](https://github.com/ZegarNotAvailable/CloneFactory/blob/main/HardWare/Pictures/CA80-RCbus-Flash.jpg)
 
