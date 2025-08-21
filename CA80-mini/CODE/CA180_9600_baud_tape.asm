@@ -38,7 +38,6 @@ setBufor:
 ;*******************************************************************************************
 ; Petla glowna.
 ;*******************************************************************************************
-
 loop:   call CSTS               ; Sprawdzamy klawiature
         call C,klawisz          ; I jesli trzeba, wysylamy
         call readchr            ; sprawdzamy, czy przyslano znak
@@ -54,11 +53,10 @@ loop:   call CSTS               ; Sprawdzamy klawiature
         and 0FH                 ; bufor ma 16 bajtow
         ld L,A
         jr loop
-
 ;*******************************************************************************************
 ; Odswiezanie wyswietlacza.
 ;*******************************************************************************************
-dispRefresh:                    ; Odswiezamy wyswietlacz
+dispRefresh:                    
         ld HL,bufor             ; poczatek bufora
         ld DE,CYF0              ; najmlodza cyfra wyswietlacza
         ld B,8                  ; licznik petli
@@ -68,8 +66,7 @@ dispRefresh:                    ; Odswiezamy wyswietlacz
         ld (DE),A               ; zapis do bufora wyswietlacza
         inc DE                  ; kolejna cyfra
         djnz .next              ; powtorz, jezeli nie ostatnia
-        jr loop                 ; odbierz nastepna ramke UART
-        
+        jr loop                 ; odbierz nastepna ramke UART        
 pobierzByte:
         call half               ; czytaj z bufora b7..b4
         rla                     ; segmenty kgfe
@@ -83,8 +80,7 @@ half:   ld A,(HL)               ; czytaj z bufora znak
         cp 0AH
         ret C                   ; cyfra
         sub 7                   ; litera A..F
-        ret                     
-        
+        ret                             
 ;*******************************************************************************************
 ; Wyslanie kodu klawisza.
 ;*******************************************************************************************
@@ -118,7 +114,6 @@ nieCR:
         jr sendchr              ; wyslij przez UART
 nieM:   sub 14H                 ; pozostale klawisze F1..F4 (W..Z)
         add A,'W'
-
 ;*******************************************************************************************
 ; Funkcje UART.
 ;*******************************************************************************************
