@@ -1,0 +1,73 @@
+C800 - MIK11 str. 140-171
+
+*0 - kostka. Pseudolosowe losowanie cyfr 1 do 6.
+*1 - TOTO-LOTEK. Pseudolosowe losowanie numerów 1 do 49.
+*2[=] MASTER MIND. (PNKTZ=5) Opis w MIKO6 str. 231 i MIK11 str. 140. 
+*2[.][PNKTZ][=] - jak wy¿ej lecz z ustawieniem zmiennej PNKTZ.
+    Jeœli gracz odgadnie ustawienie wczeœniej lub równo z PNKTZ, to CA80 wylosuje i odegra mu w nagrodê jedn¹ z melodii. Po wejœciu do programu, na powitanie, wygrywana jest melodia.
+    Szeœæ kolorów reprezentowanych jest przez 6 liter: A,B,C,D,E,F. 
+    Po wywo³aniu programu naciskamy 4 razy klawisz 0-F losuj¹c ustawienie - kolory mog¹ siê powtarzaæ.
+    Od tej pory nale¿y zawsze naciskaæ sekwencjê:
+    [LITERY][=] gdzie:
+    LITERY to kombinacja liter A,B,C,D,E,F ustawiona przez u¿ytkownika. który ma za zadanie odgadn¹æ wylosowane ustawienie.
+    Po ka¿dej sekwencji komputer odpowie w nastêpuj¹cy sposób:
+    1. Wyœwietla '0' jeœli ¿adna litera nie zosta³a odgadniêta
+    2. Wyœwietla tyle cyfr '2', ile jest liter odgadniêtych i stoj¹cych na w³aœciwej pozycji.
+    3. Wyœwietla tyle cyfr '1', ile jest liter odgadniêtych lecz stoj¹cych na b³êdnej pozycji. 
+    Po odgadniêciu wyœwietlany jest napis "dobre:" i odgadniête ustawienie.
+    Licznik NUMER PRÓBY na PWYS=15H wskazuje za którym razem ustawienia zosta³o odgadniête - jeœli za PNKTZ razem lub wczeœniej to w nagrodê CA80 wylosuje i odegra melodiê. Powtórny START po naciœniêciu klawisza SPAC ('.').
+*3[=] Gra FOLLOW ME. (PNKTZ=7,DELZ=90) Opis w MIK06 str. 232 i MIK11 str. 140
+*3[.][PNKTZ][.][DELZ][=] DELZ-decyduje o szybkoœci. PNKTZ jak w *2
+    Po wstêpnym odegraniu melodii CA80 wyœwietla losowo 15 cyfr O do 7.
+    Nale¿y zapamiêtaæ jak najwiêksz¹ iloœæ cyfr, a nastêpnie wprowadziæ je z klawiatury w takiej samej kolejnoœci. Po naciœniêciu 15 cyfr, lub wczeœniej po naciœniêciu CR ('=') wyœwietlona zostanie iloœæ zdobytych punktów.
+    Nagroda jak w pkt. *2. Powtórny START po naciœniêciu SPAC ('.')
+*4[=] Gra REFLEKS. (PNKTZ=21,DELZ=90)
+*4[.][PNKTZ][.][DELZ][=] jak wy¿ej z ustawieniem PNKTZ i DELZ.
+    Komputer pokazuje pseudolosowe cyfry szesnastkowe 0-F. Zadaniem gracza jest naciœniêcie odpowiedniego klawisza przed znikniêciem wyœwietlanej cyfry. Komputer zlicza i wyœwietla punkty swoje i gracza (poprzedzone liter¹ 'G'). Gra koñczy siê gdy ktokolwiek osi¹gnie 21 punktów (dla PNKTZ=21). DELZ decyduje o szybkoœci.
+    Powtórny start gry klawiszem SPAC ('.').
+*5 - [MOD DO WYKORZYSTANIA]
+*6 - [MOD DO WYKORZYSTANIA]
+*7 - [MOD DO WYKORZYSTANIA]
+*8 - [MOD DO WYKORZYSTANIA]
+*9[CZAS1][.][CZAS2][.]...[CZASn][=] - obs³uga powiêkszalnika
+    CZASx - czas w sekundach O do 9999 sek. Maksimum 20 czasów.
+    W czasie wywo³ywania zdjêæ istnieje czêsto potrzeba odmierzania kolejnych odcinków czasowych niezale¿nie od normalnej obs³ugi powiêkszalnika. Po wejœciu do zlecenia *9 mo¿na wprowadziæ do 20 czasów odmierzanych sekwencyjnie w przerwaniach maskowalnych. Przerwania te MUSZ¥ byæ generowane - zapewnia je modu³ MIK51. W czasie odmierzania kolejnych czasów dostêpna jest normalna obs³uga powiêkszalnika opisana w pkt. 2.4 zlecenie *9. Numer kolejny odmierzanego czasu wyœwietlany jest na najbardziej znacz¹cej pozycji wyœwietlacza - numery 10-20 sygnalizowane s¹ dobiciem kropki. Zakoñczenie kolejnych, odmierzanych czasów sygnalizowane jest alarmem dŸwiêkowym w g³oœniku wciœniêcia klawisza (wy³¹czenie klawiszem 'D' lub 'C'), oraz cyfrowym impulsem dodatnim na wyjœciu PB0 i ujemnym na PB1 (t=6uS).
+    Brak odmierzania czasów sygnalizowany jest ma³ym kwadratem na PWYS=17H.
+    Na pozycji PVVYS=16H wyœwietlacza mog¹ byæ wyœwietlane kreski o nastêpuj¹cym znaczeniu:
+    górna kreska - w³¹czone podgl¹danie odmierzanych czasów
+    œrodkowa kreska - w³¹czona sygnalizacja dŸwiêkowa
+    dolna kreska - w³¹czony automatyczny start odmierzanych czasów
+    Odmierzaniem kolejnych czasów mo¿na sterowaæ klawiszami A-F:
+    A - w³¹czenie podgl¹dania odmierzanych czasów. Odmierzany czas mo¿na podejrzeæ tylko wtedy, gdy nie jest odmierzany czas powiêkszalnika.
+    B - wy³¹czenie podgl¹dania odmierzanych czasów
+    C - rêczny start odmierzania kolejnego czasu
+    D - w³¹czenie sygnalizacji dŸwiêkowej koñca odmierzonego czasu
+    E - maskowanie (wy³¹czenie) sygnalizacji dŸwiêkowej
+    F - automatyczny start odmierzania kolejnego odcinka czasowego
+*A - [MOD DO WYKORZYSTANIA]
+*B - [MOD DO WYKORZYSTANIA]
+*C - [MOD DO WYKORZYSTANIA]
+*D[ROK][.][MIESIAC][.][DZIEN MIES][=] - wieczny kalendarz
+    Po wprowadzeniu daty wyœwietlony zostanie dzieñ tygodnia w postaci symbolicznej jak w CA88. ROK=0-9999
+    Wyliczenie dnia tygodnia dla innej daty po naciœniêciu SPAC ('.')
+*E - ELEKTRONICZNE ORGANY Z PAMIÊCI¥ (wymagane MIK51 w ZU50)
+    Po wejœciu do programu na pozycji PWYS=17H wyœwietlony zostanie ma³y kwadrat, sygnalizuj¹cy pocz¹tek zlecenia. Dostêpne s¹ wówczas zlecenia lokalne o nazwach %0,%1,%2,%3,%4,%5. Z ka¿dego z tych zleceñ mo¿na wróciæ do pocz¹tku programu w dowolnej chwili naciskaj¹c klawisz SPAC ('.').
+    Znaczenie zleceñ lokalnych:
+    %0[=] kasowanie pamiêtanego utworu z inicjacj¹ bufora
+    - musi byæ wykonane przy pierwszym wejœciu do *E.
+    %1[=] dopisywanie do koñca bufora kolejnego fragmentu muzycznego
+    STOP klawiszem SPAC ('.').
+    %2[=] odtworzenie ca³ego pamiêtanego utworu.
+    Odtwarzanie mo¿na wstrzymaæ naciskaj¹c klawisz CR ('=') lub zakoñczyæ w sposób natychmiastowy klawiszem SPAC ('.').
+    %3[=]..[=] kasowanie kolejnych, koñcowych nut utworu.
+    %4[=] elektroniczne organy bez pamiêci. Kolejno wciskane nuty nie bêd¹ zapamiêtywane w buforze PBUF/C002
+    %5[=][KLAW][NUTA][=]...[KLAW][NUTA][=] definiowanie klawiszy
+    [NUTA] - kod tablicowy nuty (MIK06 str. 89)
+    [KLAW] - jeden z klawiszy 0-F
+    W czasie wejœcia do zlecenia *E klawiszom 0-F przypisywane s¹ automatycznie kolejne, tablicowe nuty z OKTAWY1 i OKTAWY2 - MIK06 str. 89. Kody te mo¿na zmieniæ zleceniem %5. Aktualne kody klawiszy mo¿na obejrzeæ zleceniem %4.
+    W czasie wprowadzania kolejnych nut do bufora (zlec. %1) bufor roœnie w górê pocz¹wszy od adresu PBUF/C002. Pod adresem C000H i C001H pamiêtany jest aktualny adres koñca bufora. W zleceniach %1,%2,%3,%4 na pozycji PWYS=43H wyœwietlany jest adres koñca bufora PBUF, zaœ na pozycji PWYS=20H kod tablicowy aktualnie granej nuty.
+*F[NUMER] wyœwietlenie sumy kontrolnej MODULO256 (rozkaz ADD)
+    NUMER=0 - adresy 0000H-07FFH
+    NUMER=1 - adresy 0000H-3FFFH
+    NUMER=2 - adresy 4000H-7FFFH
+    NUMER=3 - adresy 8000H-BFFFH

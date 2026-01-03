@@ -1,0 +1,102 @@
+CA88 - MIK06 str. 78-137
+
+*0 - wyœwietlanie zegara czasu rzeczywistego
+    W czasie wyœwietlania aktualnego czasu mo¿na nacisn¹æ klawisz: 
+    0-3 - wyœwietlanie aktualnej daty ROKJMIES/DZIEN MIESIACA 
+    4-9 - wyœwietlanie dnia tygodnia w postaci symbolicznej
+    A - wyœwietlenie daty NOTATNIKA (MIES/DZIEN/nT)
+    B - wyœwietlenie TIMERA (MIN/UZ/Tm)
+    C - wy³¹czenie kresek
+    D - w³¹czenie kreseek
+    E - BUDZIK1 (GODZ/MIN/DRZEMKA1) - sygna³ wciœniêcia klawisza
+    F - BUDZIK2 (GODZ/MIN/DRZEMKA2) - komputerowa pozytywka 
+    DRZEMKA1,DRZEMKA2 = O do 98 min
+    Jeœli NOTATNIK, TIMER, BUDZIKI lub BUDZIK2 s¹ w³¹czone to po naciœniêciu odpowiedniego klawisza dobijana jest kropka na najmniej znacz¹cej pozycji wyœwietlacza. Powy¿sze urz¹dzenia obs³ugiwane s¹ WY£¥CZNIE w czasie wyœwietlania aktualnego czasu - procesor w zleceniu *0. Œwiecenie kropki na drugiej od koñca cyfrze po naciœniêciu klawisza 'F' sygnalizuje w³¹czony system przerwañ maskowalnych INT. W czasie generowania sygna³u budzenia, naciœniêcie klawisza E dla BUDZIK1 lub F dla BUDZIK2 spowoduje dodanie DRZEMKI do aktualnego czasu - kolejne budzenie nast¹pi z chwil¹ osi¹gniêcia nowego czasu.
+    Jeœli DRZEMKA=0 to nast¹pi tylko wy³¹czenie budzika.
+*1[GODZ][.][MIN][.][SEK][=] - ustawienie aktualnego czasu
+*2[ROK][.][MIES][.][DNIM][.][DNITYG][=] - ustawienie daty
+    DNITYG=1-Pn,2=Wt,3-Œr,4-Cz,5-Pt,6-So,7-Ne
+*3[GODZ][.][MIN][.][DRZEMKA1][=] - ustawienie BUDZIKA1
+*4[GODZ][.][MIN][.][DRZEMKA2][=] - ustawienie BUDZIKA2
+*5[NR.LINII][=] - sterowanie liniami urz¹dzeñ zewnêtrznych
+    Wybrana linia zmienia swój stan na przeciwny. NR.LINII=1,2,3,4,5
+*6 - deklaracja nowego adresu tablicy za³¹czeñ tworzonej przez *8
+*6[0][.][TZAL][.][0][=J - deklaracja adresu TZAL bez jej zerowania
+*6[0][.][TZAL][.][1][=] - deklaracja nowego TZAL z zerowaniem
+*6[1][=] - wyœwietlenie adresu pocz¹tku i koñca TZAL
+*7 - deklaracja adresów TMEL i TGRA
+*7[0][=] - deklaracja firmowych TMEL i TGRA
+*7[0][.][TMEL][.][TGRA][=] - deklaracja TMEL i TGRA u¿ytkownika
+*7[1][=] - wyœwietlenie aktualnych TMEL i TGRA
+*8 - EDYTOR tablicy za³¹czeñ/wy³¹czeñ urz¹dzeñ zewnêtrznych 
+    Objaœnienia parametru UZ (urz¹dzenie zewnêtrzne):
+    Numery urz¹dzeñ legalnych: 1,2,3,4,5.
+    0 - wy³¹cz urz¹dzenie.
+    1 - w³¹cz urz¹dzenie.
+    UZ=14 - w³¹cz urz¹dzenie nr 4
+    UZ=04 - wy³¹cz urz¹dzenie nr 4
+    Jeœli tablica za³¹czeñ TZAL jest pusta to pojawi siê komunikat
+    [d.=..=..] ¿¹daj¹cy zadeklarowania daty:
+    [MIESIAC][.][DZEN][=] Legalne: MIESIAC=0 do 12, DZIEN=0 do 31 
+    Gdy TZAL nie jest pusta to pojawi siê przyk³adowa data:
+    [..=02=28] - Luty, 28 (kropki to wygaszone pozycje wyœwietacza)
+    Gdy na wyœwietlaczu widoczna jest data to komputer reaguje WY£¥CZNIE na k³awisze:
+    1. [C]...[C] - kasowanie daty aktualnie widniej¹cej na wyœwietlaczu
+    2. [D][MIES][.][DZIEN][=] - wprowadzenie do TZAL nowej daty lub tylko jej odszukanie gdy istnieje! Nowe daty wpisywane s¹ do TZAL w kolejnoœci rosn¹cej.
+    3. [E]..[E] - sekwencyjne wyœwietlanie dat istniej¹cych w TZAL
+    4. [G] - wyjœcie z EDYTORA. Powrót do CA88.
+    5. [F] - przejœcie do przegl¹dania GODZ/MIN/UZ dla daty na wyœwietlaczu. 
+    Jeœli na wyœwietlaczu widoczna jest data, to naciskaj¹c klawisz 'F' spowodujemy wyœwietlenie komunikatu:
+    [..o..o..] - gdy w danym dniu nie ma ani jednego za³¹czenia
+    albo przyk³adowego komunikatu:
+    [19o30o11] - o godz. 19.30 w³¹cz urz¹dzenie nr 1, gdy w wybranym dniu istnieje przynajmniej jedno za³¹czenie/wy³¹czenie.
+    Gdy na wyœwietlaczu widoczna jest GODZ/MIN/UZ to komputer reaguje WY£¥CZNIE na klawisze:
+    1. [C]...[C] - kasowanie GODZ/MIN/UZ widocznych na wyœwietlaczu
+    2. [D][GODZ][.][MIN][.][UZ][=] - wprowadzenie nowych GODZ/MIN/UZ 
+    GODZ/MIN/UZ wpisywane do TZAL w kolejnoœci rosn¹cej.
+    3. [E] - natychmiastowe wyœwietlenie DATY dla wyœwietlanych GODZ/MIN/UZ
+    4. [F]...[F] - sekwencyjne wyœwietlanie GODZ/MIN/UZ w obrêbie wybranej daty
+    5. [G] - wyjœcie z EDYTORA. Powrót do CA88.
+    Zadeklarowanie daty:
+    [D][0][.][0][=] wyœwietlacz: [..=00=00] spowoduje, ¿e umieszczone pod t¹ dat¹ GODZ/MIN/UZ bêd¹ obs³ugiwane KAZDEGO dnia - bez wzglêdu na rzeczywist¹ datê. Obs³uga TZAL odbywa siê WY£¥CZNIE w zleceniu *0.
+*9 - obs³uga STOPERA i POWIÊKSZALNIKA
+*9[0][=] - wywo³anie stopera bez zak³óceñ zegara w CA80.
+    START/STOP (miêdzyczasy) - przy pomocy dowolnego klawisza
+    START - naciœniêcie klawisza '0' gdy wyœwietlany miêdzyczas
+*9[1][=] - wywo³anie powiêkszalnika bez zak³óceñ zegara w CA80
+    Po wywo³aniu programu powiêkszalnika wprowadzamy czas za³¹czenia
+    [SEKUNDY][=] Legalne: O do 9999 sek
+    albo
+    [SEKUNDY][.][setneSEK][=] Legalne: SEKUNDY=0-9999, setneSEK=0-99
+    Po wprowadzeniu czasu za³¹czenia nast¹pi jego odmierzanie - odliczanie do ty³u. W czasie odliczania w³¹czony zostanie powiêkszalnik pod³¹czony do gniazda nr 5. Gniazdo nr 4 jest w³¹czone gdy nr 5 jest wy³¹czone i odwrotnie. Odmierzanie czasu mo¿na przerwaæ w dowolnej chwili naciskaj¹c klawisz SPAC ('.') - nale¿y wówczas wprowadziæ nowy czas. Po odmierzeniu czasu wyœwietli siê jego wartoœæ pocz¹tkowa.
+    Mo¿na wówczas:
+    1. Powtórzyæ odmierzanie czasu naciskaj¹c klawisz 1-F.
+    2. Wprowadziæ nowy czas naciskaj¹c klawisz SPAC ('.')
+    3. W³¹czyæ powiêkszalnik na czas nieokreœlony naciskaj¹c '0' - wy³¹czenie przez ponowne naciœniêcie klawisza '0'. Jeœli powiêkszalnik jest w³¹czony to zablokowana jest mo¿liwoœæ wykonania punktu 1 lub 2.
+*A[MIES][.][DZIEN][=] - ustawienie daty notatnika
+    Osi¹gniêcie daty przez zegar CA80 sygnalizowane jest 6 kreskami
+    Zadeklarowanie nielegalnej daty kasuje notatnik.
+*B[MIN][.][UZ][=] - ustawienie TIMERA
+    Odliczanie do ty³u zadanego czasu (MIN=0-99min) po czym wykonanie operacji na urz¹dzeniu zewnêtrznym UZ - zobacz *8.
+*C - obs³uga przerwañ, portu u¿ytkownika i potencjometru.
+*C[0][=] - wy³¹czenie przerwañ (wy³¹czenie pozytywki)
+*C[1][=] - w³¹czenie przerwañ (wykonanie rozkazu EI)
+*C[2][=] - inicjacja portu u¿ytkownika dla CA88.
+    Przydatna gdy zleceniami np. *81, *84 "rozprogramujemy" port.
+*C[POTENC][=] - ustawienie czu³oœci "klawiszowego" potencjometru dla zleceñ *D, *E. 
+    POTENC=3 - czu³oœæ maksymalna, POTENC=OFFH - czu³oœæ minimalna
+*D - testowanie komputerowej pozytywki
+*D[NR.MELODII][.][nn][=] - odgrywanie zadanej melodii nn razy
+    z wyœwietlaniem TEMPA (4-przespieszanie, 5-zwalnianie). 
+*D[NR.MELODII][.][FF][=] - odgrywanie melodii z efektami œwietlnymi. STOP odgrywania przez naciœniêcie klawisza 'F'
+*E - komputerowe sterowanie œwiat³ami
+*E[ADRES][.][DLUG][=] - deklarowanie adresu pocz¹tku i d³ugoœci programu œwietlnego z natychmiastowym startem programu.
+*E[PORT][.][0][=] - STOP programu z wys³aniem PORT do portu PA. 
+    Klawisze funkcyjne komputerowego sterowania œwiat³ami:
+    0 - przyspieszanie programu
+    1 - zwalnianie programu
+    2 - wyœwietlanie programu w "pozytywie"
+    3 - wyœwietlanie programu w "negatywie"
+    4 - przyspieszanie programu (gdy jest CTC)
+    S - zwalnianie programu (gdy jest CTC)
+    Czu³oœæ klawiszy przyspieszaj¹cych/zwalniaj¹cych mo¿na ustawiæ zleceniem *C.

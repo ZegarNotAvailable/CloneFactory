@@ -1,0 +1,102 @@
+CA80 - MIK08 str. 104-119
+
+*0 - wyœwietlanie czasu. Naciœniêcie 0-F - wyœwietlenie daty.
+*1[GODZ][.][MIN][.][SEK][=] - ustawienie czasu
+*2[ROK][.][MIES][.][DNIM][.][DNITYG][=] - ustawienie daty
+    Dni tygodnia: 7-Pn, 6-Wt, 5-Sr, 4-Cz, 3-PL 2-Sb, 1-Ni
+*3[=] - wymiana rejestrów procesora AF, BC, DE, HL (dostêpne w zleceniu *F) na AF', BC', DE', HL' i odwrotnie.
+*4[ADR1][ADR2][.][NAZWA][=] - zapis na magnetofon obszaru <ADR1,ADR2> któremu nadanie zostanie nazwa NAZWA.
+*5[ADRW][.][NAZWA][=] - zapis rekordu EOF
+    ADRW - adres wejœcia do programu o nazwie NAZWA
+*6[NAZWA][=] - odczyt z magnetofonu programu o nazwie NAZWA
+*7[=] - inicjacja systemu (skok do adresu 0000H). [MAGSPDLUG]=2510.
+*7[MAGSPDLUG][=] - ustawienie nowych parametrów transmisji magnetofonowej.
+    MAGSP - szybkoœæ, DLUG - d³ugoœæ rekordu
+*80 - wejœcie do EPROMu w podstawce U10.
+    Skok do adresu 4020H o ile spe³niony jest warunek (4001H)=55H
+*800 - wywo³anie programu C800 MONITOR (EPROM z MIK45 w U10)
+*81[PAMIÊÆ][=] - programator pamiêci EPROM. (MIK06 str. 4-32)
+    PAMIÊÆ = 2716, 2732, 2732A, 2764, 27128 (tylko z Vpp = 25V lub 21V!!)
+    UWAGA.
+    1. W³o¿yæ programator MIK86 do ZU50 i podaæ napiêcie Vpp.
+    2. Sprawdziæ zgodnoœæ z³¹cz Z1 i Z2 z rodzajem pamiêci!!!
+    3. Pamiêci EPROM wyjmowaæ i wk³adaæ WY£¥CZNIE w czasie wyœwietlania na wyœwietlaczu rodzaju pamiêci np. 2716.
+    4. Aby zrezygnowaæ z czêœciowo wprowadzonego zlecenia nale¿y wprowadziæ liczbê OFFFFH jako ostatni parametr.
+    5. W czasie programowania EPROM nie wolno naciskaæ klawisza M.
+    Po zadeklarowaniu rodzaju pamiêci dostêpne s¹ zlecenia:
+    #A[=] - sprawdzenie czy ca³a pamiêæ czysta (F(x)=OFFH)
+    #A[ADR1][.][ADR2][=] - sprawdzanie czy obszar <ADR1,ADR2> czysty.
+    #B[ADR1][.][ADR2][.][ADR3][=] - przepisanie obszaru EPROM <ADR1,ADR2> z MIK86 do RAM CA80 od adresu ADR3.
+    #C[ADR1][.][ADR2][.][ADR3][=] - porównanie obszaru EPROM <ADR1,ADR2> z MIK86 z obszarem od adresu ADR3 w CA80
+    #D[=][PAMIEC][=] - wybór innej pamiêci EPROM
+    #E[ADR1][.][ADR2][.][ADR3][=] - programowanie pamiêci EPROM
+        Zapisanie obszaru <ADR1,ADR2> z CA80 do pamiêci EPROM w MIK86 pocz¹wszy od adresu ADR3.
+*82 - kalkulator czterodzia³aniowy (MIKO6 str. 33-34)
+    Klawisze funkcyjne:
+    C - pomno¿yæ (*), D - podzieliæ (/), E - odj¹æ (-), F - dodaæ (+), G - klawisz C/CE
+*83 - przegl¹danie i modyfikacja pamiêci z sum¹ kontroln¹
+*83[ADRES][=]...[=][DATA][=]...[.] (MIKO6 str. 68-69)
+*83[ADRES][=] - deklaracja adresu pocz¹tkowego
+    [=]...[=] - przegl¹danie do przodu bez modyfikacji
+    [DATA][=] - modyfikacja (wpisanie DATA) komórki pamiêci.
+    [.] - powrót do pocz¹tku bloku tj. adresu OXXXOH.
+    Po pojawieniu siê napisu "Suma" nale¿y wprowadziæ sumê kontroln¹ podan¹ w kodzie maszynowym programu po œredniku (;).
+*84 - czêstoœciomierz i czasomierz (MIK06 str. 52-66)
+    Po naciœniêciu „84 nale¿y wybraæ tryb pracy naciskaj¹c:
+    0 - czêstoœciomierz (Fmax=100MHz)
+    1 - czasomierz (0-100 sek z dok³adnoœci¹ 0.000001sek)
+    Kasowanie czasomierza przez naciœniêcie klawisza 0-F.
+    Klawisze funkcyjne czêstoœciomierza (Fmax=100MHz):
+    C - okres mierzenia 10 sek (dla wolnych przebiegów)
+    D - okres mierzenia 1 sek (domyœlnie)
+    E - okres mierzenia 0.1 sek
+    G - powrót do pocz¹tku programu (wyœwietlenie kreski)
+*85 - przegl¹danie i modyfikacja portów we/wy (MIK06 str. 69-70)
+*85[PORT][=] - ci¹g³e odczytywanie zawartoœci portu o adresie PORT w postaci szesnastkowej.
+*85[PORT][=][.] - j/w lecz wyœwietlanie w postaci binarnej.
+*85[PORT][.][DATA][=]..[DATA][=].. - wysy³anie pod adres PORT sta³ych DATA.
+    G - powrót do pocz¹tku zlecenia *85
+*86 - Porównanie obszarów pamiêci (MIK06 str. 70)
+*86 [ADR1][.][ADR2][.][ADR3][=] - porównanie obszaru <ADR1,ADR2> z obszarem od adresu ADR3.
+    Jeœli s¹ ró¿nice na n-tym bajcie to nast¹pi wyœwietlenie ADR1+n i (ADR1+n)
+    Mo¿liwe s¹ wówczas dzia³ania:
+    [=] - wyœwietlanie ADR3+n i (ADR3+n)
+    [G] - poszukiwanie nastêpnych bajtów o ró¿nej wartoœci
+*87[=] - kasowanie rozkazu EI w EXIT (MIK06 str. 71)
+*88 - wywo³anie programu CA88 MONITOR (MIK43 - 8KB)
+*89 - wejœcie do EPROMu w podstawce U11.
+    Skok do adresu 8002H o ile spe³niony jest warunek (8001)=0AAH
+*89 - wywo³anie programu C930 MONITOR
+*8A - [MOD] obliczanie sum kontrolnych
+    [ADRES][=][=].. - wyœwietlanie kolejnych sum od ADRES
+    [.][ADRES1][=][=].. - pobranie nowego adresu i wyœwietlanie sum od adresu ADRES1
+    Naciœniêcie klawisza innego ni¿ CR (=) lub SPAC (.) spowoduje wyjœcie z procedury
+*8B - [MOD DO WYKORZYSTANIA]
+*8C - [MOD DO WYKORZYSTANIA]
+*8D - [MOD] synchronizacja zegara
+*8E - po³¹czenie ZX SPECTRUM—>CA80 (MIK06 str. 227-230)
+*8F - wejœcie do programu dla RAM typu MIK96 (MIK06 str. 71-72)
+*9[S£OWO][.][ADRES][=] - poszukiwanie s³owa 8 lub 16-bitowego w obszarze 16KB od adresu ADRES. S£OWO 8-bitowe, gdy bardziej znacz¹cy bajt: S£OWO=0.
+*A[HEX1][.][HEX2][=] - obliczenie sumy i ró¿nicy szesnastkowej.
+    [++++----] - wyœwietlacz, ++++ = HEX1+HEX2, ---- = HEX1-HEX2
+*B[ADR1][.][ADR2][.][ADR3][=] - przesuniêcie obszaru pamiêci <ADR1,ADR2> do obszaru od adresu ADR3. Ka¿de poprawne!
+*C - praca krokowa. Gdy na wyœwietlaczu PC i (PC) to ka¿de naciœniêcie [=] spowoduje wykonanie dok³adnie 1 rozkazu.
+*D[ADRES][=]..[.].. - przegl¹danie i modyfikacja pamiêci
+    [=]..[=] - przegl¹danie pamiêci do przodu
+    [.].[.] - przegl¹danie pamiêci do ty³u
+    [xx][=] - modyfikacja na wartoœæ xx z przesuniêciem do przodu
+    [xx][.] - modyfikacja na wartoœæ xx z przesuniêciem do ty³u
+*E[ADR1][.][ADR2][.][DATA][=] - wpisanie sta³ej DATA do obszaru <ADR1,ADR2>
+*F - przegl¹danie i modyfikacja rejestrów procesora
+*F - wyœwietlenie wskaŸników sygnalizacyjnych (znaczników)
+    Naciœniêcie klawisza: [0] to Z=0, [1] to Z=1, [2] to CY=0, [3] to CY=1
+*Fr - wyœwietlenie zawartoœci rejestru r
+    r={A, B, C, D, E, F, H=8, L=9, PC=G, SP=7, IX=5, IY=6}
+    [.][xx][=] - modyfikacja rejestru wyœwietlanego na wartoœæ xx.
+*G - wejœcie do programu u¿ytkownika
+*G[=] - wejœcie w/g aktualnego stanu procesora
+*G[.][PULAPKA][=] - jak wy¿ej, lecz z zastawieniem pu³apki na adresie PULAPKA.
+*G[.][PULAPKA1][.][PULAPKA2][=] - jak wy¿ej, lecz z zastawieniem dwóch pu³apek na adresach PULAPKA1 i PULAPKA2.
+*G[ADRES][=]
+*G[ADRES][.][PULAPKA][=]
+*G[ADRES][.]IPULAPKA1][.][PULAPKA2][=] - jak odpowiednio wy¿ej, lecz przed wejœciem do programu u¿ytkownika nast¹pi zmiana licznika rozkazów na PC=ADRES.

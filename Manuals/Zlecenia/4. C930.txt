@@ -1,0 +1,92 @@
+C930
+
+*0 - Reflex2 - badanie czasu reakcji wzrokowej.
+*0[CYFRA][.][ILOSC PRÓB][=]
+    CYFRA - deklaracja szesnastkowej cyfry aktywnej, po jej wyœwietleniu nale¿y jak najszybciej nacisn¹æ klawisz CR("="). Zmierzony czas reakcji z dok³adnoœci¹ do 0.01 sek wyœwietlony zostanie na trzech najbardziej znacz¹cych cyfrach wyœwietlacza.
+    ILOŒÆ PRÓB - okreœla iloœæ kolejnych prób "³apania" najlepszych czasów. Czasy z kolejnych prób s¹ sumowane przez komputer - ³¹czny czas wyœwietlony zostanie po wykonaniu ostatniej próby.
+    Po wprowadzeniu powy¿szych parametrów na wyœwietlaczu pojawi siê numer próby (0) poprzedzony liter¹ P oraz pozioma kreska na najmniej znacz¹cej pozycji wyœwietlacza.
+    Po naciœniêciu klawisza SPAC(".") komputer zacznie wyœwietlaæ w sposób losowy cyfry szesnastkowe - nale¿y jak najszybciej nacisn¹æ klawisz CR("=") z chwil¹ pojawienia siê cyfry aktywnej. Wczeœniejsze naciœniêcie CR skoñczy siê ukaraniem gracza.
+    Start kolejnej próby uzyskuje siê poprzez naciœniêcie klawisza SPAC.
+    Po wykonaniu zadanej ILOŒCI PROB na trzech najbardziej znacz¹cych cyfrach wyœwietlacza wyœwietlona zostanie suma uzyskanych czasów. Do gry mo¿e przyst¹piæ kolejny gracz poprzez naciœniêcie klawisza "0".
+*1 - Reflex3 - badanie czasu reakcji s³uchowej
+*1[CYFRA][.][ILOŒÆ PROB][=]
+    Parametry i dzia³anie programu jest identyczne jak w zleceniu *0 z tym, ¿e nale¿y jak najszybciej nacisn¹æ klawisz CR("=") po us³yszeniu sygna³u w g³oœniku wciœniêcia klawisza.
+*2 - Kosmiczna bitwa
+    Statek kosmiczny którym sterujemy widoczny jest z prawej strony wyœwietlacza. Mo¿e on przyjmowaæ trzy pozycje ustalane przy pomocy klawiszy "B"(góra), "7"(œrodek), "3"(dó³). Do statków nieprzyjaciela nadlatuj¹cych z lewej strony strzelamy naci skaj¹c klawisz "0". Po ka¿dorazowym zestrzeleniu wszystkich widocznych obiektów nasze konto punktowe zwiêkszane jest o jeden, zaœ na wyœwietlaczu pojawia siê napis "Good!". Gdy wrogi statek dopadnie nas, nasze konto punktowe jest zerowane i musimy gromadziæ punkty od pocz¹tku. Niektóre statki nieprzyjaciela nie s¹ uzbrojone i kolizja z nimi jest bezpieczna. Gra ma 16 poziomów. Po dojœciu do koñca czeka na nas nagroda - niespodzianka. Na uwagê zas³uguje znakomita oprawa muzyczna "Kosmicznej bitwy" zrealizowana przy pomocy g³oœniczka sygnalizuj¹cego wciœniêcie klawisza.
+*3 - Tor przeszkód
+    Po rozpoczêciu gry na najbardziej znacz¹cej pozycji wyœwietlacza pojawia siê pozioma kreska na œrodku, a po chwili od prawej strony zaczynaj¹ siê zbli¿aæ "przeszkody". Charakterystyczne dla nich jest to, ¿e dok³adnie jeden z trzech poziomych segmentów jest wolny. Przeszkody te przemieszczaj¹ siê na s¹siednie segmenty pocz¹tkowo co ok. 0.5 sek, a nastêpnie coraz szybciej. Zadaniem graj¹cego jest tak manewrowaæ swoim pojazdem za pomoc¹ klawiszy ("0"-dó³, "b"-góra), aby trafiæ w wolne miejsce zbli¿aj¹cej siê przeszkody. Dla u³atwienia manewrowania przeszkody oddzielone s¹ miejscami pustymi, ponadto, jeœli przeszkoda bêdzie na tej pozycji na której jest pojazd, ale nie trafi w niego, gracz mo¿e ju¿ zmieniæ pozycjê swojego statku wchodz¹c na przeszkodê z boku. Spowoduje to znikniêcie przeszkody bez sygnalizowania wypadku - sygnalizowane s¹ tylko zderzenia czo³owe. Pojawia siê wówczas sygna³ dŸwiêkowy, a nastêpnie liczba punktów uzyskanych przez gracza. Ta liczba, to po prostu iloœæ przesuniêæ przeszkód o jedn¹ pozycjê. Mo¿e to byæ np. liczba kilometrów któr¹ przejecha³ samochód omijaj¹c przeszkody terenowe. Po wyœwietleniu wyniku komputer oczekuje na wciœniêcie dowolnego klawisza, co spowoduje wznowienie gry.
+*4 - Œwiat³a - program œwietlny ze sterowaniem klawiszowym
+*4[STALA][=]
+    STALA - 8-bitowa liczba binarna rotowana (RRCA) w lewo lub prawo z regulowan¹ szybkoœci¹. Jedynka wyœwietlana jest na wyœwietlaczu w postaci kwadratu, zaœ zero w postaci pustego miejsca (spacji).
+    Przyk³ad: *4[1][=] - wyœwietlanie jednego punktu œwietlnego
+    Klawisze funkcyjne:
+    0 - wyœwietlanie STA£EJ w pozytywie
+    1 - wyœwietlanie w negatywie
+    2 - przesuw w prawo
+    3 - przesuw w lewo
+    4 - zwalnianie
+    5 - przyœpieszanie
+    Analiza programu "œwiat³a" jest zalecana pocz¹tkuj¹cym mikroelektronikom - listing w pkt. 2.2.2 w MIK11. Po jego wywo³aniu *4 nale¿y nacisn¹æ klawisz "M" i przejœæ do CA80. Mo¿na wówczas œledziæ program "ŒWIAT£A" za³adowany do RAM przy pomocy pu³apek programowych.
+*5 - Napis
+*5[=] - Ci¹g³e przesuwanie w lewo firmowego komunikatu HELLO.
+*5[ADRES][=] - przesuwanie komunikatu spod adresu ADRES.
+    Klawisze funkcyjne: 4 - zwalnianie, 5 - przyœpieszanie
+    Program zajmuje obszer pamiêci RAM <C000,C069>. Poza tym obszarem u¿ytkownik mo¿e przygotowaæ swoje komunikaty i wywo³ywaæ je z programu NAPIS.
+    Po dobraniu odpowiednich komunikatów (zakoñczonych sta³¹ FFH) i prêdkoœci przesuwu mo¿na uzyskaæ ciekawe efekty.
+*6 - "Kó³ko i krzy¿yk"
+    Gra toczy siê na planszy (kratkowanej kartce papieru) o wymiarach 16*16 kratek.
+    Wspó³rzêdne poziome i pionowe opisane s¹ przy pomocy cyfr szesnastkowych 0, 1,...F.
+    Po wyœwietleniu komunikatu powitalnego pojawi siê pytanie kto ma zacz¹æ: Gr-A Pr-B.
+    Jeœli zacz¹æ chce gracz to naciska literê 'A', zaœ jeœli zacz¹æ ma program nale¿y nacisn¹æ literê 'B'. Swój ruch gracz wprowadza do komputera podaj¹c wspó³rzêdne pola w którym stawia krzy¿yk np. [68][=]. Po naciœniêciu klawisza CR ('=') komputer natychmiast odpowiada podaj¹c swój ruch - na planszy zaznaczamy go kó³kiem itd. W dowolnej chwili mo¿emy rozpocz¹æ grê od pocz¹tku - wystarczy nacisn¹æ klawisz SPAC (".") jako pierwszy przy wprowadzaniu swoich wspó³rzêdnych. Wygrywa ten, kto pierwszy zakreœli w sposób ci¹g³y, piêæ znaków (kó³ek lub krzy¿yków) poziomo, pionowo lub ukoœnie. Jest obojêtne któr¹ ze wspó³rzêdnych bêdziemy podawaæ jako pierwsz¹, jednak nale¿y tak samo traktowaæ posuniêcia komputera i nie zmieniaæ ich kolejnoœciw ci¹gu danej gry. Po zakoñczeniu gry zwyciêstwem przez jedn¹ ze stron, komputer pyta czy zacz¹æ now¹ grê - potwierdzenie dowolnym klawiszem za wyj¹tkiem 'G'.
+    Pomimo prostego algorytmu program nie jest ³atwy do ogrania.
+*7 - Nadlatuj¹cy cel
+*7[=] - Tempo=64H
+*7[TEMPO][=]
+    Po wejœciu do programu wyœwietlany jest komunikat zakoñczony pytaniem o tempo gry.
+    Klawiszami 0-3 (kreska w dó³) oraz 4-F (kreska w górê) sterujemy kresk¹ z lewej strony.
+    Z prawej strony nadlatuj¹ figury, które nale¿y str¹caæ - im wiêcej tym lepiej.
+    Po "przeleceniu" 2048 pozycji nastêpuje wyœwietlenie iloœci zdobytych punktów.
+    Klawiszem SPAC mo¿na wówczas przejœæ do nastêpnej rundy bez zerowania punktów, zaœ klawiszem CR z zerowaniem punktów.
+*8 - Warcaby
+    Wspó³rzêdne literowe: A=A, B=B, F=F, G=9(CA80), H=8(CA80)
+    Aby graæ z CA80 w warcaby nale¿y zaopatrzyæ siê w oryginaln¹ szachownicê z opisem wspó³rzêdnych. Wszystkie ruchy nale¿y wykonywaæ na bie¿¹co, razem z komputerem.
+    Wszystkie piony powinny byæ ustawione na czarnych polach. Piony biale powinny byæ u³o¿one w prostok¹cie A1-A3,A1-H1.
+    Obs³uga programu: Po pojawieniu siê napisów pocz¹tkowych "Orion" i "Warc 1.0" program zapytuje nas o kolor pionów którymi chcemy graæ. Mo¿emy wcisn¹æ klawisz 'B' (bia³e) lub 'C' (czarne). Po wybraniu koloru pojawia siê napis pytaj¹cy o poziom gry "Level?" - mo¿emy wybraæ jeden z piêciu poziomów od '0' do '4'. Poziom '0' jest najs³abszy, zaœ poziom '4' najsilniejszy. Przy poziomie '0' czas oczekiwania na ruch komputera wynosi ok. 2-3 sek, zaœ przy poziomie '4' mo¿e dochodziæ do 15 min. W czasie ca³ej gry na najbardziej znacz¹cej pozycji wyœwietlacza wyœwietlany jest kolor pionów którymi obecnie gramy oraz poziom gry - wyœwietlanie tych informacji realizowane jest w przerwaniu niemaskowalnym NMI. Komputer oczekuje na wprowadzenie ruchu cz³owieka wyœwietlaj¹c [..-..] na najmniej znacz¹cych cyfrach wyœwietlacza.
+    Gracz wprowadza ruch wprowadzaj¹c 4 znaki np. G3H4 - ruch piona z G3 na H4 (klawisz H='8', G="9"). Po wprowadzeniu poprawnego ruchu napis odje¿d¿a w lewo co oznacza, ¿e komputer zaakceptowa³ ruch. Na wyswietlaczu widaæ [?-..].
+    Nale¿y wówczas:
+    a. nacisn¹æ '=', gdy nie zbijamy pionów komputerowi
+    b. w przypadku bicia, nale¿y wprowadziæ wspó³rzêdne wszystkich zdejmowanych pionów komputera po czym nacisn¹æ '='
+    Gdy chcemy zrezygnowaæ z czêœciowo wprowadzonego ruchu naciskamy jako pole docelowe wspó³rzêdne nieistniej¹cego pola np. G3H9 - rezygnacja z ruchu G3H4 (z przyk³adu wy¿ej) Po naciœniêciu '=' oczekujemy na ruch komputera, który jest wyœwietlany wraz z sygna³em dŸwiêkowym. Po wprowadzeniu ruchu komputera na szachownicê naciskamy '='.
+    Mo¿liwe jest wówczas:
+    a. wyswietlenie komunikatu [..-..] i oczekiwanie na ruch cz³owieka, gdy komputer nie zbija nam piona
+    b. wyœwietlenie komunikatu [bij!-xx], gdy komputer zbija nam piona z pozycji 'xx'.
+    Jeœli zbija nam kilka pionów to poda wspó³rzêdne wszystkich pól z których nale¿y zdj¹æ nasze biedne, zbite piony.
+    W czasie gdy komputer oczekuje na wprowadzenie NASZEGO ruchu (wyswietlane [..-..]) mo¿emy nacisn¹æ klawisz:
+    [0] - rozpoczêcie gry od pocz¹tku.
+    [=] - zmiana poziomu gry. Ka¿de naciœniecie [=] spowoduje przejscie na wy¿szy poziom modulo5 tj.0,1,2,3,4,0,1,2...
+    [.] (klawisz z kropk¹) - s³u¿y do zmiany koloru pionów tzn. zamieniamy siê "miejscami" z komputerem.
+    [1] - rezygnacja z ruchu. Mo¿emy zrezygnowaæ z NASZEGO ruchu naciskaj¹c [1].
+    Ka¿de naciœniêcie [1] spowoduje ruch komputera - cz³owiek mo¿e nie ruszaæ siê swoimi pionami.
+    Gdy chcemy aby pojedynczy ruch wykona³ za nas komputer to:
+    a. zmieniamy kolor naciskaj¹c klawisz z kropk¹
+    b. naciskamy '1'- komputer ruszy siê za nas !!!
+    c. zmieniamy kolor naciskaj¹c [.], po czym naciskamy [1] oczekuj¹c na w³aœciwy ruch komputera. Wprowadzaj¹c powy¿sz¹ sekwencjê w sposób ci¹g³y mo¿emy spowodowaæ, ¿e komputer bêdzie gra³ sam przeciwko sobie.
+    Program nie jest odporny na ruchy niezgodne z regu³ami gry. Nale¿y uwa¿aæ, aby siê nie pomyliæ !!!
+*9 - Szachy
+    Wspó³rzêdne literowe: A=A, B=B,...F=F, G=9(CA80), H=8(CA80)
+    Po wejœciu do programu na najmniej znacz¹cej cyfrze wyœwietlacza pojawi siê znak zapytania.
+    Mo¿emy wówczas nacisn¹æ klawisz:
+    1. '0' - wznowienie gry od pocz¹tku z kolorem i si³¹ gry ustalonymi wczeœniej. Przy pierwszym wejœciu do gry nie ma to sensu, gdy¿ nie znamy ani koloru, ani si³y.
+    2. inny ni¿ '0' - wznowienie gry od pocz¹tku z mo¿liwoœci¹ wyboru koloru i si³y gry. Po wyœwietleniu komunikatu "Orion Co. presents CHESS 2.0" naciskamy dowolny klawisz. Pojawi siê komunikat "Copy? -=" pytaj¹c nas czy chcemy skopiowaæ program SZACHY na magnetofon - jeœli TAK, to naciskamy dwa razy klawisz '='. Naciœniêcie klawisza innego ni¿ '=' spowoduje wyœwietlenie komunikatu "Si³a-". Mo¿emy wówczas nacisn¹æ '0' (s³abszy poziom) lub '1' (silniejszy poziom) potwierdzj¹c to klawiszem '='. Na wyœwietlaczu pojawi siê nastêpny komunikat "Color-" Naciskamy wówczas kolor pionów którymi chcemy graæ 'B' (bia³e) lub 'C' (czarne) potwierdzaj¹c to klawiszem '='. Na wyœwietlaczu pojawi siê wówczas typowa plansza gry.
+    [o..==..o] - w miejscu '..' podawane s¹ kolejne ruchy
+    Swoje ruchy cz³owiek wprowadza naciskaj¹c zawsze 4 klawisze bez potwierdzenia np. E2E4 - ruch piona z pozycji E2 na E4. Komputer odpowiada swoim posuniêciem na tych samych polach wyœwietlacza. Jeœli zechcemy zrezygnowaæ z czêœciowo wprowadzonego ruchu to wprowadzanie koñczymy nieistniej¹cym polem np E2E9 (rezygnacja z ruchu E2 na E4)
+    Gdy wyœwietlane jest posuniêcie KOMPUTERA mo¿emy nacisn¹æ:
+    a. '0' - inicjacja gry od pocz¹tku. Po prawej stronie pojawi siê znak zapytania i mamy sytuacjê wyjœciow¹.
+    b. '1' - zmiana poziomu gry na przeciwny '0' na '1' lub '1' na '0'
+    c. po naciœniêciu klawisza innego ni¿ '0' lub '1' mo¿emy wprowadziæ swój kolejny ruch.
+    Po dojœciu do linii przemiany z piona robi siê zawsze hetman. Program nie jest odporny na ruchy niezgodne z regu³ami gry.
+*A - Biorytm
+*A[Rok urodzenia][.][Miesi¹c][.][Dzieñ][=]
+    UWAGA: Przed wywo³aniem programu "Biorytm" ustaw zegar!!!
+    Po wprowadzeniu daty urodzenia pojawi¹ siê litery F (cykl fizyczny). E (cykl emocjonalny), I (cykl intelektualny).
+    Z prawej strony ka¿dej litery wyœwietlone zostan¹ kreski. Kreska na dole oznacza minus, w œrodku zero lub kryzys, zaœ na górze plus cyklu. Po naciœniêciu CR (=) pojawi siê dok³adne okreœlenie dnia cyklu np. 10, 15, 3 odpowiadaj¹ce poprzedniemu opisowi czyli: F10, E15, I3. Spacja spowoduje ponowne wyœwietlenie "wykresu". Naciœniêcie klawisza "0" umo¿liwia wprowadzenie nowej daty.
