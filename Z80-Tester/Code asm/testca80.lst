@@ -1,0 +1,653 @@
+0000-                 15               .sf testCA80.sym
+0000-                 16               .in ca80.inc
+0000-            I     1
+0000-            I     2       ; USER8255      .eq             $E0
+0000-            I     3       PA                  .eq         0
+0001-            I     4       PB                  .eq         1
+0002-            I     5       PC                  .eq         2
+0003-            I     6       CTRL                .eq         3
+0000-            I     7
+0000-            I     8       ; USER 8255
+0000-            I     9       ; PA          .EQ   $E0
+0000-            I    10       ; PB          .EQ   $E1
+0000-            I    11       ; PC          .EQ   $E2
+0000-            I    12       ; CONTR       .EQ   $E3
+0000-            I    13
+0000-            I    14       ; SYSTEM 8255
+0000-            I    15       ; PA         .EQ   $F0
+0000-            I    16       ; PB         .EQ   $F1
+0000-            I    17       ; PC         .EQ   $F2
+0000-            I    18       ; CONTR      .EQ   $F3
+0000-            I    19
+00E8-            I    20       EME8       .eq   $E8
+0000-            I    21
+FF66-            I    22       STOS:      .eq $FF66
+0487-            I    23       ERROR:      .EQ   0487H
+0000-            I    24             ;
+0000-            I    25             ;LICZNIKI PROGRAMOWE
+0000-            I    26             ;
+FFE8-            I    27       LCI:      .eq $FFE8
+FFE9-            I    28       SYG:      .eq $FFE9
+FFEA-            I    29       TIME:     .eq $FFEA             ; Licznik binarny %256 (liczy w d�) co 2 ms
+0000-            I    30             ;
+0000-            I    31             ;ZEGAR CZASU RZECZYWISTEGO
+0000-            I    32             ;
+FFEB-            I    33       MSEK:     .eq $FFEB             ; <0, 4>
+FFEC-            I    34       SETSEK:   .eq $FFEC             ; <0, 99> setne sekundy
+FFED-            I    35       SEK:      .eq $FFED             ; <0, 59> sekundy
+FFEE-            I    36       MIN:      .eq $FFEE             ; <0, 59> minuty
+FFEF-            I    37       GODZ:     .eq $FFEF             ; <0, 23> godziny
+FFF0-            I    38       DNITYG:   .eq $FFF0             ; <7, 6, 5, 4, 3, 2, 1>
+FFF1-            I    39       DNIM:     .eq $FFF1             ; <1 ... > dni miesi�ca
+FFF2-            I    40       MIES:     .eq $FFF2             ; <1, 12> miesi�ce
+FFF3-            I    41       LATA:     .eq $FFF3             ; <0, 99> rok
+0000-            I    42             ;
+0000-            I    43                               ;       BUFOR WY�WIETLACZA
+0000-            I    44             ;
+FFF7-            I    45       CYF0        .eq $FFF7
+FFF8-            I    46       CYF1        .eq $FFF8
+FFF9-            I    47       CYF2        .eq $FFF9
+FFFA-            I    48       CYF3        .eq $FFFA
+FFFB-            I    49       CYF4        .eq $FFFB
+FFFC-            I    50       CYF5        .eq $FFFC
+FFFD-            I    51       CYF6        .eq $FFFD
+FFFE-            I    52       CYF7        .eq $FFFE
+0000-            I    53             ;
+0000-            I    54             ; PROCEDURY SYSTEMOWE
+0000-            I    55             ;
+0000-            I    56             ; WY�WIETLACZ
+0000-            I    57             ;
+FFC1-            I    58       APWYS     .eq $FFC1 ; wskazuje po�o�enie parametru wy�wietlacza
+FFF6-            I    59       PWYS      .eq $FFF6 ; parametr wy�wietlacza
+01AB-            I    60       COM         .eq $01AB ; COM - pokazuje znak 7-seg z rejestru C
+01AC-            I    61       COM1      .eq $01AC ; COM1 - pokazuje znak 7-seg z rejestru C bez zmiany PWYS
+0010-            I    62       CLR         .eq $0010 ; CLR - kasowanie wyswietlacza
+0011-            I    63       CLR1      .eq $0011 ; CLR1 - kasowanie wyswietlacza bez zmiany PWYS
+01D4-            I    64       PRINT       .eq $01D4 ; PRINT - drukuje komunikat z (HL)
+01D5-            I    65       PRINT1    .eq $01D5 ; PRINT1 - drukuje komunikat z (HL) bez zmiany PWYS
+01E0-            I    66       CO        .eq $01E0 ; CO - wyswietlenie cyfry hex
+01E1-            I    67       CO1       .eq $01E1 ; CO1 - wyswietlenie cyfry hex bez zmiany PWYS
+0018-            I    68       LBYTE       .eq $0018 ; LBYTE - wyswietlenie Aku w HEX
+001B-            I    69       LBYTE1    .eq $001B ; LBYTE1 - wyswietlenie Aku w HEX bez zmiany PWYS
+0020-            I    70       LADR      .eq $0020 ; LADR - wyswietlenie HL w HEX
+0021-            I    71       LADR1     .eq $0021 ; LADR1 - wyswietlenie HL w HEX bez zmiany PWYS
+022D-            I    72       CZAS        .eq $022D ; CZAS - pokazuje czas/date
+0000-            I    73             ;
+0000-            I    74             ; KLAWIATURA
+0000-            I    75             ;
+FFC3-            I    76       CSTS      .eq $FFC3 ; CSTS - test czy klawisz nacisniety
+FFC6-            I    77       CI        .eq $FFC6 ; CI - pobranie znaku z klawiatury
+01A2-            I    78       CRSPAC      .EQ $01A2 ; CY = 1 [=], Z=1 [.]
+0000-            I    79             ;
+0000-            I    80             ; KLAWIATURA I WY�WIETLACZ
+0000-            I    81             ;
+0007-            I    82       TI        .eq $0007 ; TI - pobranie znaku z echem
+0008-            I    83       TI1       .eq $0008 ; TI1 - pobranie znaku z echem bez zmiany PWYS
+01F4-            I    84       PARAM     .eq $01F4 ; PARAM - pobranie liczby 16-bit do HL z echem
+01F5-            I    85       PARAM1    .eq $01F5 ; PARAM1 - pobranie liczby 16-bit do HL z echem bez zmiany PWYS
+01F8-            I    86       PARA1     .eq $01F8 ; PARA1 - pierwsz� cyfr� podajemy w akumulatorze a dalej jak PARAM1
+0213-            I    87       EXPR      .eq $0213 ; EXPR - pobranie ciagu liczb 16bit na stos
+0214-            I    88       EXPR1     .eq $0214 ; EXPR1 - pobranie ciagu liczb 16bit na stos bez zmiany PWYS
+0000-            I    89             ;
+0000-            I    90             ; POMOCNICZE
+0000-            I    91             ;
+023B-            I    92       HILO      .eq $023B ; HILO - iterator, HL++, CY = !(DE >= HL)
+0065-            I    93       SPEC      .eq $0065 ; RET - dla obs�ugi magnetofonu
+0000-            I    94             ;
+0000-            I    95             ; OBS�UGA MAGNETOFONU
+0000-            I    96             ;
+0626-            I    97       ZMAG      .eq $0626 ; zapis na magnetofon
+067B-            I    98       ZEOF      .eq $067B ; zapis rekordu EOF
+071B-            I    99       OMAG      .eq $071B ; odczyt z magnetofonu
+FFB2-            I   100       MAGSP     .eq $FFB2 ; parametr szybko�ci zapisu
+FFB1-            I   101       DLUG      .eq $FFB1 ; d�ugo�� rekordu danych
+0000-            I   102
+00FF-            I   103       EOM       .eq $FF
+0000-            I   104
+0806-            I   105       EM        .eq $806
+0803-            I   106       RTS       .eq $803
+FF8D-            I   107       ELOC      .eq $FF8D
+FFA5-            I   108       LLOC      .eq $FFA5
+0270-            I   109       START     .EQ $270
+FFB3-            I   110       GSTAT     .EQ $FFB3
+0000-                 17       ;*********************************************************************
+0000-                 18               .sm code           ;
+C000-                 19               .or $C000          ; RAM IN ALL OF CA80
+C000-                 20       ;**************************************************************************
+C000-                 21       ;
+C000-                 22       ; Costants definitions
+C000-                 23       ;
+0000-                 24       eos             .equ    $00             ; End of string
+000D-                 25       cr              .equ    $0d             ; Carriage return
+000A-                 26       lf              .equ    $0a             ; Line feed
+0020-                 27       space           .equ    $20             ; Space
+C000-                 28       ;
+C000-                 29
+C000-                 30       TEST_START:
+C000-11 0D C3         31 ( 10)         LD      DE,MSGSUPTEST
+C003-CD 51 C3         32 ( 17)         CALL    WRSTR
+C006-CD AF C0         33 ( 17)         CALL    SK_TEST
+C009-CD 4A C0         34 ( 17) TEST:   CALL    TESTF
+C00C-3A EA FF         35 ( 13) TEST1:  LD      A,(TIME)    ; TIME LICZNIK 2 MS (JAK TICK)
+C00F-B7               36 (  4)         OR      A
+C010-CC 4A C0         37 (10+)         CALL    Z,TESTF
+C013-CD C3 FF         38 ( 17)         CALL    CSTS
+C016-38 F4            39 ( 7+)         JR      C,TEST1     ; CZEKAJ NA PUSZCZENIE KLAW
+C018-3A EA FF         40 ( 13) TEST2:  LD      A,(TIME)    ; TIME LICZNIK 2 MS (JAK TICK)
+C01B-B7               41 (  4)         OR      A
+C01C-CC 4A C0         42 (10+)         CALL    Z,TESTF
+C01F-CD C3 FF         43 ( 17)         CALL    CSTS
+C022-30 F4            44 ( 7+)         JR      NC,TEST2    ; CZEKAJ NA WCISNIECIE KLAW
+C024-CD A2 01         45 ( 17)         CALL    CRSPAC
+C027-38 04            46 ( 7+)         JR      C,FPLUS     ; [=]
+C029-28 06            47 ( 7+)         JR      Z,FMINUS    ; [.]
+C02B-18 DF            48 ( 12)         JR      TEST1       ; INNY KLAWISZ
+C02D-3E 46            49 (  7) FPLUS:  LD      A,'F'
+C02F-18 02            50 ( 12)         JR      SEND
+C031-3E 47            51 (  7) FMINUS: LD      A,'G'
+C033-D3 E9            52 ( 11) SEND:   OUT    (EME8+1),A
+C035-AF               53 (  4)         XOR     A
+C036-32 05 C2         54 ( 13)         LD      (MSG),A
+C039-CD 3E C0         55 ( 17)         CALL    WNMI
+C03C-18 CB            56 ( 12)         JR      TEST
+C03E-                 57
+C03E-3A EA FF         58 ( 13) WNMI:   LD      A,(TIME)    ; TIME LICZNIK 2 MS (JAK TICK)
+C041-4F               59 (  4)         LD      C,A         ; ZAPAMIETAJ STAN LICZNIKA
+C042-3A EA FF         60 ( 13) WAIT:   LD      A,(TIME)    ; TIME LICZNIK 2 MS
+C045-B9               61 (  4)         CP      C           ; SPRAWDZ, CZY SIE ZMIENILO
+C046-28 FA            62 ( 7+)         JR      Z,WAIT      ; CZEKAJ JEZELI NIE
+C048-4F               63 (  4)         LD      C,A
+C049-C9               64 ( 10)         RET
+C04A-                 65
+C04A-CD 3E C0         66 ( 17) TESTF:  CALL    WNMI        ; CZEKAJ NA NMI
+C04D-21 00 00         67 ( 10)         LD      HL,0        ; ZERUJ LICZNIK
+C050-06 09            68 (  7) DELAY:  LD      B,$9
+C052-10 FE            69 ( 8+) DELAY1: DJNZ    DELAY1
+C054-2C               70 (  4)         INC     L           ; DZIESIATE
+C055-7D               71 (  4)         LD      A,L
+C056-FE 0A            72 (  7)         CP      10
+C058-38 08            73 ( 7+)         JR      C,NEXT
+C05A-2E 00            74 (  7)         LD      L,0
+C05C-24               75 (  4)         INC     H           ; MHz
+C05D-44               76 (  4)         LD      B,H
+C05E-                 77       .LOOP
+C05E-E3               78 ( 19)         EX      (SP),HL
+C05F-E3               79 ( 19)         EX      (SP),HL
+C060-10 FC            80 ( 8+)         DJNZ    .LOOP       ; KOREKTA
+C062-                 81
+C062-3A EA FF         82 ( 13) NEXT:   LD      A,(TIME)    ; TIME LICZNIK 2 MS
+C065-B9               83 (  4)         CP      C           ; SPRAWDZ, CZY SIE ZMIENILO
+C066-28 E8            84 ( 7+)         JR      Z,DELAY     ; CZEKAJ JEZELI NIE
+C068-                 85
+C068-3A 05 C2         86 ( 13)         LD      A,(MSG)
+C06B-B7               87 (  4)         OR      A
+C06C-20 1E            88 ( 7+)         JR      NZ,DISPCA
+C06E-11 2A C3         89 ( 10)         LD      DE,MSGCLK   ; CLK NA TERMINAL
+C071-CD 51 C3         90 ( 17)         CALL    WRSTR
+C074-7C               91 (  4)         LD      A,H
+C075-CD E6 C1         92 ( 17)         CALL    PRINTDIGIT
+C078-3E 2E            93 (  7)         LD      A,'.'
+C07A-CD 65 C3         94 ( 17)         CALL    PUTC
+C07D-7D               95 (  4)         LD      A,L
+C07E-CD E6 C1         96 ( 17)         CALL    PRINTDIGIT
+C081-11 0A C3         97 ( 10)         LD      DE,MSGCRLF
+C084-CD 51 C3         98 ( 17)         CALL    WRSTR
+C087-3E FF            99 (  7)         LD      A,0FFH
+C089-32 05 C2        100 ( 13)         LD      (MSG),A
+C08C-D7              101 ( 11) DISPCA: RST     CLR         ; CLK NA WYSWIETLACZ
+C08D-30              102               .DB     30H
+C08E-7C              103 (  4)         LD      A,H
+C08F-E6 F0           104 (  7)         AND     A,0F0H      ; CZY CLK > 15 MHz?
+C091-28 09           105 ( 7+)         JR      Z,.NEXT     ; SKOCZ GDY NIE
+C093-1F              106 (  4)         RRA
+C094-1F              107 (  4)         RRA
+C095-1F              108 (  4)         RRA
+C096-1F              109 (  4)         RRA
+C097-4F              110 (  4)         LD      C,A
+C098-CD E0 01        111 ( 17)         CALL    CO
+C09B-21              112               .DB     21H
+C09C-7C              113 (  4) .NEXT:  LD      A,H
+C09D-E6 0F           114 (  7)         AND     0FH
+C09F-4F              115 (  4)         LD      C,A
+C0A0-CD E0 01        116 ( 17)         CALL    CO
+C0A3-21              117               .DB     21H
+C0A4-4D              118 (  4)         LD      C,L         ; PO PRZECINKU
+C0A5-CD E0 01        119 ( 17)         CALL    CO
+C0A8-10              120               .DB     10H
+C0A9-21 F8 FF        121 ( 10)         LD      HL,CYF1
+C0AC-CB FE           122 ( 15)         SET     7,(HL)      ; PRZECINEK (DOT)
+C0AE-C9              123 ( 10)         RET
+C0AF-                124
+C0AF-                125       SK_TEST:
+C0AF-11 06 C2        126 ( 10)             LD      DE,MSGSIGNIN
+C0B2-CD 51 C3        127 ( 17)             CALL        WRSTR                       ; CALL  BDOS
+C0B5-                128
+C0B5-                129       ; CHECK FOR U880
+C0B5-                130
+C0B5-0E 00           131 (  7)         LD     C,0          ; NO MESSAGE
+C0B7-37              132 (  4)             SCF
+C0B8-ED A3           133 ( 16)             OUTI                ; .DB   0EDH,0A3H       ; Z80 OUTI INSTRUCTION
+C0BA-01 E8 01        134 ( 10)             LD      BC,00100H+EME8      ; USE SIO CHANNEL B COMMAND PORT FOR TESTS
+C0BD-30 15           135 ( 7+)             JR      NC,Z80
+C0BF-                136
+C0BF-                137       ; U880 DETECTED
+C0BF-                138
+C0BF-21 04 C2        139 ( 10)             LD  HL,ISMME
+C0C2-34              140 ( 11)         INC (HL)                            ; LD        (HL),1          ; SET MANUFACTURER MME FLAG
+C0C3-E5              141 ( 11)         PUSH    HL
+C0C4-21 38 C3        142 ( 10)         LD      HL,CAU880
+C0C7-CD D4 01        143 ( 17)         CALL    PRINT
+C0CA-43              144               .DB     43H
+C0CB-E1              145 ( 10)         POP     HL
+C0CC-11 88 C2        146 ( 10)         LD          DE,MSGU880
+C0CF-CD 51 C3        147 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C0D2-18 0F           148 ( 12)         JR          CHKCMOS
+C0D4-                149
+C0D4-                150       Z80:
+C0D4-E5              151 ( 11)         PUSH    HL
+C0D5-21 4C C3        152 ( 10)         LD      HL,CAZ80
+C0D8-CD D4 01        153 ( 17)         CALL    PRINT
+C0DB-43              154               .DB     43H
+C0DC-E1              155 ( 10)         POP     HL
+C0DD-11 8F C2        156 ( 10)         LD          DE,MSGZ80
+C0E0-CD 51 C3        157 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C0E3-                158
+C0E3-                159       CHKCMOS:
+C0E3-11 4F C2        160 ( 10)         LD          DE,MSGFAMILY
+C0E6-CD 51 C3        161 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C0E9-                162       ; NMOS/CMOS CPU DETECTION ALGORITHM:
+C0E9-                163       ; 1. DISABLE INTERRUPTS
+C0E9-                164       ; 2. READ AND SAVE SIO CHANNEL B INTERRUPT VECTOR
+C0E9-                165       ; 3. MODIFY SIO CHANNEL B INTERRUPT VECTOR USING OUT (C),<0|0FFH>
+C0E9-                166       ;    (DB 0EDH, 071H) UNDOCMENTED INSTRUCTION:
+C0E9-                167       ;      ON AN NMOS CPU: OUT (C),0
+C0E9-                168       ;      ON A CMOS CPU: OUT (C),0FFH
+C0E9-                169       ; 4. READ AND SAVE SIO CHANNEL B INTERRUPT VECTOR
+C0E9-                170       ; 5. RESTORE SIO CHANNEL B INTERRUPT VECTOR
+C0E9-                171       ; 6. SET SIO REGISTER POINTER TO 0
+C0E9-                172       ; 7. ENABLE INTERRUPTS
+C0E9-                173           ; 8. CHECK THE VALUE READ BACK IN STEP 4
+C0E9-                174           ;      0 - NMOS CPU
+C0E9-                175           ;      0FFH - CMOS CPU
+C0E9-0E E9           176 (  7)         LD      C,EME8+1
+C0EB-ED 71           177               .DB     0EDH, 071H      ; UNDOCUMENTED OUT (C),<0|0FFH> INSTRUCTION
+C0ED-DB E9           178 ( 11)         IN      A,(EME8+1)              ; READ THE NEW INTERRUPT VECTOR
+C0EF-B7              179 (  4)         OR  A               ; CP        00H             ; IS IT ZERO?
+C0F0-20 29           180 ( 7+)         JR  NZ,CMOS
+C0F2-                181
+C0F2-                182       ; NMOS DETECTED
+C0F2-0E 54           183 (  7)         LD      C,54H
+C0F4-CD AB 01        184 ( 17)         CALL    COM
+C0F7-17              185               .DB     17H
+C0F8-11 95 C2        186 ( 10)         LD          DE,MSGNMOS
+C0FB-CD 51 C3        187 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C0FE-                188
+C0FE-                189       ; CHECK MANUFACTURER FOR NMOS CPUS
+C0FE-                190
+C0FE-11 62 C2        191 ( 10)         LD          DE,MSGVENDOR
+C101-CD 51 C3        192 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C104-                193
+C104-                194       ; CHECK IF THE MANUFACTURER IS MME
+C104-                195
+C104-21 04 C2        196 ( 10)         LD          HL,ISMME
+C107-7E              197 (  7)         LD          A,(HL)
+C108-3D              198 (  4)         DEC     A                               ; CP    1
+C109-20 08           199 ( 7+)         JR      NZ,NOTMME
+C10B-                200
+C10B-11 A3 C2        201 ( 10)         LD          DE,MSGMME
+C10E-CD 51 C3        202 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C111-18 71           203 ( 12)         JR          DONE
+C113-                204
+C113-                205       NOTMME:
+C113-11 B3 C2        206 ( 10)         LD          DE,MSGNOTMME
+C116-CD 51 C3        207 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C119-18 0C           208 ( 12)         JR          MANUFACTURER    ; DONE !!! CHANGED FOR TOSHIBA
+C11B-                209
+C11B-                210       CMOS:
+C11B-0E 58           211 (  7)         LD      C,58H
+C11D-CD AB 01        212 ( 17)         CALL    COM
+C120-17              213               .DB     17H
+C121-11 9C C2        214 ( 10)         LD          DE,MSGCMOS
+C124-CD 51 C3        215 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C127-                216
+C127-                217       ; CHECK MANUFACTURER FOR CMOS CPUS
+C127-                218       MANUFACTURER:
+C127-11 62 C2        219 ( 10)         LD          DE,MSGVENDOR
+C12A-CD 51 C3        220 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C12D-                221
+C12D-                222       ; TEST SCF (STC) WHEN PREVIOUS INSTRUCTION DOESN'T MODIFY FLAGS
+C12D-                223       ; POP AF (POP PSW) IS NOT TREATED AS FLAG MODIFYING INSTRUCTION
+C12D-                224
+C12D-11 00 28        225 ( 10)         LD          DE,2800H            ; SET 'A' REGISTER BITS 3 AND 5
+C130-CD C0 C1        226 ( 17)         CALL    TESTSCF
+C133-FE 29           227 (  7)         CP          29H         ; FLAGS ON ZILOG CPU
+C135-28 1C           228 ( 7+)         JR      Z,ZILOG
+C137-FE 09           229 (  7)         CP          09H         ; FLAGS ON TOSHIBA (AND SOME NEC?) CPUS
+C139-28 29           230 ( 7+)         JR      Z,TOSHIBA
+C13B-FE 01           231 (  7)         CP          01H         ; FLAGS ON NEC CPU
+C13D-28 36           232 ( 7+)         JR      Z,NEC
+C13F-                233
+C13F-                234       ; UNRECOGNIZED CPU
+C13F-                235
+C13F-CD D1 C1        236 ( 17)         CALL    PRINTHEX        ; PRINT FLAGS
+C142-                237
+C142-E5              238 ( 11)         PUSH    HL
+C143-21 47 C3        239 ( 10)         LD      HL,CAUNKN
+C146-CD D4 01        240 ( 17)         CALL    PRINT
+C149-43              241               .DB     43H
+C14A-E1              242 ( 10)         POP     HL
+C14B-11 02 C3        243 ( 10)         LD          DE,MSGUNKNOWN
+C14E-CD 51 C3        244 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C151-18 31           245 ( 12)         JR          DONE
+C153-                246
+C153-                247       ZILOG:
+C153-E5              248 ( 11)         PUSH    HL
+C154-21 4C C3        249 ( 10)         LD      HL,CAZ80
+C157-CD D4 01        250 ( 17)         CALL    PRINT
+C15A-43              251               .DB     43H
+C15B-E1              252 ( 10)         POP     HL
+C15C-11 D3 C2        253 ( 10)         LD          DE,MSGZILOG
+C15F-CD 51 C3        254 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C162-18 20           255 ( 12)         JR          DONE
+C164-                256
+C164-                257       TOSHIBA:
+C164-E5              258 ( 11)         PUSH    HL
+C165-21 42 C3        259 ( 10)         LD      HL,CATOSH
+C168-CD D4 01        260 ( 17)         CALL    PRINT
+C16B-43              261               .DB     43H
+C16C-E1              262 ( 10)         POP     HL
+C16D-11 E5 C2        263 ( 10)         LD          DE,MSGTOSHIBA
+C170-CD 51 C3        264 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C173-18 0F           265 ( 12)         JR          DONE
+C175-                266
+C175-                267       NEC:
+C175-E5              268 ( 11)         PUSH    HL
+C176-21 3D C3        269 ( 10)         LD      HL,CANEC
+C179-CD D4 01        270 ( 17)         CALL    PRINT
+C17C-43              271               .DB     43H
+C17D-E1              272 ( 10)         POP     HL
+C17E-11 FC C2        273 ( 10)         LD          DE,MSGNEC
+C181-CD 51 C3        274 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C184-                275
+C184-                276       DONE:
+C184-                277
+C184-C9              278 ( 10)         RET                     ; RETURN TO TEST
+C185-                279
+C185-                280       ;-------------------------------------------------------------------------
+C185-                281       ; TESTFLAGS - TEST HOW SCF INSTRUCTION AFFECTS YF AND XF FLAGS
+C185-                282       ; NOTE: YF IS FLAGS.5 AND XF IS FLAGS.3
+C185-                283       ; INPUT:
+C185-                284       ;       NONE
+C185-                285       ; OUTPUT:
+C185-                286       ;       PRINTED ON CONSOLE
+C185-                287       ;-------------------------------------------------------------------------
+C185-                288       TESTFLAGS:
+C185-11 75 C2        289 ( 10)         LD          DE,MSGFLAGS
+C188-CD 51 C3        290 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C18B-16 00           291 (  7)         LD          D,00H
+C18D-                292       LOOP1:
+C18D-1E 00           293 (  7)             LD      E,00H
+C18F-                294       LOOP2:
+C18F-CD C0 C1        295 ( 17)         CALL    TESTSCF
+C192-21 F4 C1        296 ( 10)         LD          HL,FLAGCOUNT        ; POINT TO FLAG COUNTERS
+C195-0E 08           297 (  7)         LD          C,8         ; NUMBER OF BITS / FLAGS
+C197-                298       LOOP3:
+C197-0F              299 (  4)         RRCA                    ; LOWER BIT TO C
+C198-30 07           300 ( 7+)         JR      NC,LOOP4
+C19A-                301
+C19A-34              302 ( 11)         INC         (HL)                ; INCREMENT COUNTER IF FLAG IS SET
+C19B-20 04           303 ( 7+)         JR      NZ,LOOP4                ; NO OVERFLOW
+C19D-23              304 (  6)         INC         HL          ; MOVE TO THE HIGH BIT
+C19E-34              305 ( 11)         INC         (HL)                ; INCREMENT HIGHER BIT
+C19F-18 01           306 ( 12)         JR          LOOP5               ; ALREADY INCREMENTED HL BY 1, SKIP NEXT INX H
+C1A1-                307       LOOP4:
+C1A1-23              308 (  6)             INC     HL          ; MOVE TO THE NEXT COUNTER
+C1A2-                309       LOOP5:
+C1A2-23              310 (  6)         INC         HL
+C1A3-0D              311 (  4)         DEC         C           ; DECREMENT LOOP COUNTER
+C1A4-20 F1           312 ( 7+)         JR      NZ,LOOP3                ; LOOP COUNTER NOT ZERO - NEXT BIT
+C1A6-1C              313 (  4)         INC         E           ; INCREMENT DE
+C1A7-20 E6           314 ( 7+)         JR      NZ,LOOP2
+C1A9-14              315 (  4)         INC         D
+C1AA-20 E1           316 ( 7+)         JR      NZ,LOOP1
+C1AC-                317
+C1AC-                318       ; PRINT VALUES
+C1AC-0E 10           319 (  7)         LD          C,16                ; 16 DIGITS
+C1AE-21 03 C2        320 ( 10)         LD          HL,FLAGCOUNT+15     ; POINT AT THE MSB
+C1B1-                321       LOOP6:
+C1B1-7E              322 (  7)         LD          A,(HL)
+C1B2-CD D1 C1        323 ( 17)         CALL    PRINTHEX
+C1B5-2B              324 (  6)         DEC         HL
+C1B6-0D              325 (  4)         DEC         C
+C1B7-20 F8           326 ( 7+)         JR      NZ,LOOP6                ; PRINT NEXT DIGIT
+C1B9-11 0A C3        327 ( 10)         LD          DE,MSGCRLF
+C1BC-CD 51 C3        328 ( 17)         CALL    WRSTR                       ; CALL  BDOS
+C1BF-C9              329 ( 10)         RET
+C1C0-                330
+C1C0-                331       ;-------------------------------------------------------------------------
+C1C0-                332       ; TESTSCF - TEST HOW SCF INSTRUCTION AFFECTS YF AND XF FLAGS
+C1C0-                333       ; NOTE: YF IS FLAGS.5 AND XF IS FLAGS.3
+C1C0-                334       ; INPUT:
+C1C0-                335       ;       D - ACCUMULATOR VALUE BEFORE SCF
+C1C0-                336       ;       E - FLAGS VALUE BEFORE SCF
+C1C0-                337       ; OUTPUT:
+C1C0-                338       ;       A.0 - XF FLAG VALUE AFTER SCF
+C1C0-                339       ;       A.1 - YF FLAG VALUE AFTER SCF
+C1C0-                340       ;-------------------------------------------------------------------------
+C1C0-                341       TESTSCF:
+C1C0-D5              342 ( 11)         PUSH    DE
+C1C1-3E FE           343 (  7)         LD          A,0FEH
+C1C3-A2              344 (  4)         AND         D
+C1C4-57              345 (  4)         LD          D,A
+C1C5-3E FE           346 (  7)         LD          A,0FEH
+C1C7-A3              347 (  4)         AND         E
+C1C8-5F              348 (  4)         LD          E,A
+C1C9-D5              349 ( 11)         PUSH    DE              ; PUSH DE TO THE STACK
+C1CA-F1              350 ( 10)         POP         AF          ; POP A AND FLAGS FROM THE STACK (DE)
+C1CB-37              351 (  4)         SCF                     ; SET CF FLAG, DEPENDING ON THE CPU TYPE THIS
+C1CC-                352                           ; ALSO MIGHT CHANGE YF AND XF FLAGS
+C1CC-F5              353 ( 11)         PUSH    AF              ; STORE A AND F
+C1CD-D1              354 ( 10)         POP         DE          ; NEW FLAGS IN E
+C1CE-7B              355 (  4)         LD          A,E
+C1CF-D1              356 ( 10)         POP         DE
+C1D0-C9              357 ( 10)         RET
+C1D1-                358
+C1D1-                359       ;-------------------------------------------------------------------------
+C1D1-                360       ; PRINTHEX - PRINT BYTE IN HEXADECIMAL FORMAT
+C1D1-                361       ; INPUT:
+C1D1-                362       ;       A - BYTE TO PRINT
+C1D1-                363       ; OUTPUT:
+C1D1-                364       ;       NONE
+C1D1-                365       ;-------------------------------------------------------------------------
+C1D1-                366       PRINTHEX:
+C1D1-C5              367 ( 11)         PUSH    BC
+C1D2-D5              368 ( 11)         PUSH    DE
+C1D3-E5              369 ( 11)         PUSH    HL
+C1D4-F5              370 ( 11)         PUSH    AF              ; SAVE PRINTED VALUE ON THE STACK
+C1D5-0F              371 (  4)         RRCA                    ; ROTATE HIGHER 4 BITS TO LOWER 4 BITS
+C1D6-0F              372 (  4)         RRCA
+C1D7-0F              373 (  4)         RRCA
+C1D8-0F              374 (  4)         RRCA
+C1D9-CD E6 C1        375 ( 17)         CALL    PRINTDIGIT      ; PRINT HIGHER 4 BITS
+C1DC-F1              376 ( 10)         POP         AF          ; RESTORE PRINTED VALUE
+C1DD-F5              377 ( 11)         PUSH    AF              ; PUSH IT TO THE STACK AGAIN
+C1DE-CD E6 C1        378 ( 17)         CALL    PRINTDIGIT      ; PRINT LOWER 4 BITS
+C1E1-F1              379 ( 10)         POP         AF
+C1E2-E1              380 ( 10)         POP         HL
+C1E3-D1              381 ( 10)         POP         DE
+C1E4-C1              382 ( 10)         POP         BC
+C1E5-C9              383 ( 10)         RET
+C1E6-                384
+C1E6-                385       ;-------------------------------------------------------------------------
+C1E6-                386       ; PRINTDIGIT - PRINT DIGIT IN HEXADECIMAL FORMAT
+C1E6-                387       ; INPUT:
+C1E6-                388       ;       A - DIGIT TO PRINT, LOWER 4 BITS
+C1E6-                389       ; OUTPUT:
+C1E6-                390       ;       NONE
+C1E6-                391       ; TRASHES REGISTERS A, FLAGS, BC, DE, HL
+C1E6-                392       ;-------------------------------------------------------------------------
+C1E6-                393       PRINTDIGIT:
+C1E6-E6 0F           394 (  7)         AND         0FH         ; ISOLATE LOWER 4 BITS
+C1E8-C6 30           395 (  7)         ADD         '0'         ; CONVERT TO ASCII
+C1EA-FE 3A           396 (  7)         CP          ':'         ; GREATER THAN '9'?
+C1EC-38 02           397 ( 7+)         JR      C,PRINTIT
+C1EE-C6 07           398 (  7)         ADD         7       ; CONVERT A-F TO ASCII
+C1F0-                399
+C1F0-                400       PRINTIT:
+C1F0-CD 65 C3        401 ( 17)         CALL    putc                       ; CALL  BDOS
+C1F3-C9              402 ( 10)         RET
+C1F4-                403
+C1F4-00 00 00 00 
+     00 00 00 00 
+     00 00 00 00 
+     00 00 00 00     404       FLAGCOUNT:      .DW     0,0,0,0,0,0,0,0
+C204-00              405       ISMME:          .DB     0
+C205-00              406       MSG:            .DB     0
+C206-5A 38 30 20 
+     50 72 6F 63 
+     65 73 73 6F 
+     72 20 54 79 
+     70 65 20 44 
+     65 74 65 63 
+     74 69 6F 6E 
+     20 28 43 29 
+     20 32 30 32 
+     34 20 53 65 
+     72 67 65 79 
+     20 4B 69 73 
+     65 6C 65 76 
+     0D 0A           407       MSGSIGNIN:      .DB     'Z80 Processor Type Detection (C) 2024 Sergey Kiselev',CR,LF
+C23C-50 72 6F 63 
+     65 73 73 6F 
+     72 20 66 61 
+     6D 69 6C 79 
+     3A 20 00        408                           .DB 'Processor family: ',EOS
+C24F-4C 6F 67 69 
+     63 20 66 61 
+     6D 69 6C 79 
+     3A 20 20 20 
+     20 20 00        409       MSGFAMILY:      .DB     'Logic family:     ',EOS
+C262-4D 61 6E 75 
+     66 61 63 74 
+     75 72 65 72 
+     3A 20 20 20 
+     20 20 00        410       MSGVENDOR:      .DB     'Manufacturer:     ',EOS
+C275-53 43 46 20 
+     66 6C 61 67 
+     73 20 74 65 
+     73 74 3A 20 
+     20 20 00        411       MSGFLAGS:       .DB     'SCF flags test:   ',EOS
+C288-55 38 38 30 
+     0D 0A 00        412       MSGU880:        .DB     'U880',CR,LF,EOS
+C28F-5A 38 30 0D 
+     0A 00           413       MSGZ80:         .DB     'Z80',CR,LF,EOS
+C295-4E 4D 4F 53 
+     0D 0A 00        414       MSGNMOS:        .DB     'NMOS',CR,LF,EOS
+C29C-43 4D 4F 53 
+     0D 0A 00        415       MSGCMOS:        .DB     'CMOS',CR,LF,EOS
+C2A3-4D 4D 45 20 
+     6F 72 20 54 
+     68 65 73 79 
+     73 0D 0A 00     416       MSGMME:         .DB     'MME or Thesys',CR,LF,EOS
+C2B3-5A 69 6C 6F 
+     67 20 6F 72 
+     20 6E 6F 6E 
+     2D 4D 4D 45 
+     2F 54 68 65 
+     73 79 73 20 
+     63 6C 6F 6E 
+     65 0D 0A 00     417       MSGNOTMME:      .DB     'Zilog or non-MME/Thesys clone',CR,LF,EOS
+C2D3-5A 69 6C 6F 
+     67 20 6F 72 
+     20 53 47 53 
+     2F 53 54 0D 
+     0A 00           418       MSGZILOG:       .DB     'Zilog or SGS/ST',CR,LF,EOS
+C2E5-54 6F 73 68 
+     69 62 61 20 
+     6F 72 20 4E 
+     45 43 0D 0A 
+     00              419       MSGTOSHIBA:     .DB     'Toshiba or NEC',CR,LF,EOS
+C2F6-56 4D 31 0D 
+     0A 00           420       MSGVM1:         .DB     'VM1',CR,LF,EOS
+C2FC-4E 45 43 0D 
+     0A 00           421       MSGNEC:         .DB     'NEC',CR,LF,EOS
+C302-20 55 6E 6B 
+     6E 6F 77 6E     422       MSGUNKNOWN:     .DB     ' Unknown'
+C30A-0D 0A 00        423       MSGCRLF:        .DB     CR,LF,EOS
+C30D-53 75 70 65 
+     72 20 74 65 
+     73 74 65 72 
+     20 5A 38 30 
+     20 28 43 29 
+     20 5A 65 67 
+     61 72 0D 0A 
+     00              424       MSGSUPTEST:     .DB 'Super tester Z80 (C) Zegar',CR,LF,EOS
+C32A-43 4C 4B 20 
+     3D 20 00        425       MSGCLK:         .DB 'CLK = ',EOS
+C331-20 4D 48 7A 
+     0D 0A 00        426       MSGMHZ:         .DB ' MHz',CR,LF,EOS
+C338-3E 7F 7F 3F 
+     FF              427       CAU880:         .DB 3EH,7FH,7FH,3FH,0FFH
+C33D-00 54 79 39 
+     FF              428       CANEC:          .DB 0,54H,79H,39H,0FFH
+C342-31 3F 6D 76 
+     FF              429       CATOSH:         .DB 31H,3FH,6DH,76H,0FFH
+C347-00 1C 54 54 
+     FF              430       CAUNKN:         .DB 0,1CH,54H,54H,0FFH
+C34C-00 1B 7F 3F 
+     FF              431       CAZ80:          .DB 0,1BH,7FH,3FH,0FFH
+C351-                432
+C351-                433       ;       END
+C351-                434       ;************************************************************************
+C351-                435       ; ADDED BY ZEGAR.
+C351-                436       ;************************************************************************
+C351-                437       ;------------------------------------------------------------------------------
+C351-                438       ;---
+C351-                439       ;--- I/O subroutines
+C351-                440       ;---
+C351-                441       ;------------------------------------------------------------------------------
+C351-                442       WRSTR:
+C351-EB              443 (  4)                 EX      DE,HL
+C352-CD 57 C3        444 ( 17)                 CALL    puts
+C355-EB              445 (  4)                 EX      DE,HL
+C356-C9              446 ( 10)                 RET
+C357-                447       ;------------------------------------------------------------------------------
+C357-                448       ;---
+C357-                449       ;--- String subroutines
+C357-                450       ;---
+C357-                451       ;------------------------------------------------------------------------------
+C357-                452
+C357-                453       ;
+C357-                454       ; Send a string to the serial line, HL contains the pointer to the string:
+C357-                455       ;
+C357-F5              456 ( 11) puts:           push    af
+C358-7E              457 (  7) puts_loop:      ld      a, (hl)
+C359-FE 00           458 (  7)                 cp      eos             ; End of string reached?
+C35B-28 06           459 ( 7+)                 jr      z, puts_end     ; Yes
+C35D-CD 65 C3        460 ( 17)                 call    putc
+C360-23              461 (  6)                 inc     hl              ; Increment character pointer
+C361-18 F5           462 ( 12)                 jr      puts_loop       ; Transmit next character
+C363-                463       puts_end:
+C363-F1              464 ( 10)                 pop     af
+C364-C9              465 ( 10)                 ret
+C365-                466       ;
+C365-                467       ; Send a single character to the serial line (A contains the character):
+C365-                468       ;
+C365-                469       putc:
+C365-D3 E8           470 ( 11)                 OUT     (EME8),A
+C367-C9              471 ( 10)                 RET
+C368-                472       ; FOR CAFL - MASS STORAGE CA80
+C368-                473          ;################################################
+C368-                474          ; po ostatnim bajcie naszego programu wpisujemy 2 x AAAA
+C368-                475          ;.db 0AAh, 0AAh, 0AAh, 0AAh ; po tym markerze /2x AAAA/ nazwa programu
+C368-                476          ;################################################
+C368-AA AA AA AA     477        .db 0AAh, 0AAh, 0AAh, 0AAh ; marker nazwy
+C36C-53 55 50 45 
+     52 20 5A 38 
+     30 20 54 45 
+     53 54           478        .db "SUPER Z80 TEST"           ; nazwa programu, max 16 znaków /dla LCD 4x 20 znakow w linii/
+C37A-FF              479        .db 0FFH                   ; koniec tekstu
+C37B-                480
+C37B-                481       ; koniec zabawy. :-)
+C37B-                482
+C37B-                483                       .end
