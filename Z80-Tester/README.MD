@@ -22,3 +22,4 @@
   - Zwiększenie CLK może spowodować zawieszenie systemu.
     - oznacza to, że procesor nie działa prawidłowo i nie należy go używać z takim taktowaniem,
     - tester nie ma możliwości pracy z częstotliwościami wyższymi niż 8 MHZ.
+[YouTube](https://youtu.be/Z5U8VseFnzM)
