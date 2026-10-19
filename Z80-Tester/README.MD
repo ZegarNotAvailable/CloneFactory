@@ -23,4 +23,6 @@
     - oznacza to, że procesor nie działa prawidłowo i nie należy go używać z takim taktowaniem,
     - tester nie ma możliwości pracy z częstotliwościami wyższymi niż 8 MHZ.
 [YouTube](https://youtu.be/Z5U8VseFnzM)
+## Wersja mini
+[Montaż](https://klonca80.blogspot.com/2026/10/montaz-testera.html)
 ## Tester Z180
